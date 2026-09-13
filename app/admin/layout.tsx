@@ -11,6 +11,7 @@ const nav = [
   ["Inventory", "/admin/inventory"],
   ["Orders", "/admin/orders"],
   ["Customers", "/admin/customers"],
+  ["Marketing", "/admin/marketing"],
   ["Website / CMS", "/admin/cms"],
   ["Settings", "/admin/settings"],
 ];
