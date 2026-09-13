@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 type Product = { id: string; name: string; price: number; description: string | null; sizes: string[]; stock: number; image_url: string | null; is_active: boolean; slug: string };
-
-type DisplayProduct = { name: string; price: number; label: string; tone: string; desc: string; sizes: string[]; stock: number; image_url: string | null; slug: string };
+type DisplayProduct = { id: string; name: string; price: number; label: string; tone: string; desc: string; sizes: string[]; stock: number; image_url: string | null; slug: string };
+type CartItem = { product_id: string; slug: string; name: string; price: number; image_url: string | null; quantity: number; size: string };
 
 const fallback: Record<string, DisplayProduct> = {
-  gulab:{name:"Gulab Silk Saree",price:2499,label:"GULAB",tone:"rose",desc:"A soft, expressive saree inspired by the quiet romance of Indian florals. Finished for an effortless drape.",sizes:["Free Size","Custom"],stock:10,image_url:null,slug:"gulab"},
-  noor:{name:"Noor Handloom Saree",price:2899,label:"NOOR",tone:"stone",desc:"A handloom-inspired everyday classic with a calm texture and a modern, fluid silhouette.",sizes:["Free Size","Custom"],stock:10,image_url:null,slug:"noor"},
-  madhubani:{name:"Madhubani Saree",price:3199,label:"MADHU",tone:"plum",desc:"A richly expressive textile story with artisanal character and a contemporary edge.",sizes:["Free Size","Custom"],stock:10,image_url:null,slug:"madhubani"},
-  meher:{name:"Meher Cotton Saree",price:2199,label:"MEHER",tone:"sand",desc:"Light, breathable and easy to wear, made for slow afternoons and everyday rituals.",sizes:["Free Size","Custom"],stock:10,image_url:null,slug:"meher"},
+  gulab:{id:"gulab",name:"Gulab Silk Saree",price:2499,label:"GULAB",tone:"rose",desc:"A soft, expressive saree inspired by the quiet romance of Indian florals. Finished for an effortless drape.",sizes:["Free Size","Custom"],stock:10,image_url:null,slug:"gulab"},
+  noor:{id:"noor",name:"Noor Handloom Saree",price:2899,label:"NOOR",tone:"stone",desc:"A handloom-inspired everyday classic with a calm texture and a modern, fluid silhouette.",sizes:["Free Size","Custom"],stock:10,image_url:null,slug:"noor"},
+  madhubani:{id:"madhubani",name:"Madhubani Saree",price:3199,label:"MADHU",tone:"plum",desc:"A richly expressive textile story with artisanal character and a contemporary edge.",sizes:["Free Size","Custom"],stock:10,image_url:null,slug:"madhubani"},
+  meher:{id:"meher",name:"Meher Cotton Saree",price:2199,label:"MEHER",tone:"sand",desc:"Light, breathable and easy to wear, made for slow afternoons and everyday rituals.",sizes:["Free Size","Custom"],stock:10,image_url:null,slug:"meher"},
 };
 
 export default function ProductPage({params}:{params:Promise<{slug:string}>}){
@@ -32,7 +32,7 @@ export default function ProductPage({params}:{params:Promise<{slug:string}>}){
         if(data && active){
           const live=data as Product;
           const sizes=live.sizes?.length ? live.sizes : local.sizes;
-          setProduct({name:live.name,price:Number(live.price),label:live.name.split(" ")[0].toUpperCase(),tone:local.tone,desc:live.description || local.desc,sizes,stock:Number(live.stock || 0),image_url:live.image_url,slug:live.slug});
+          setProduct({id:live.id,name:live.name,price:Number(live.price),label:live.name.split(" ")[0].toUpperCase(),tone:local.tone,desc:live.description || local.desc,sizes,stock:Number(live.stock || 0),image_url:live.image_url,slug:live.slug});
           setSize(sizes[0] || "Free Size");
         }
       }
@@ -43,7 +43,15 @@ export default function ProductPage({params}:{params:Promise<{slug:string}>}){
 
   const add=()=>{
     if(product.stock<=0) return;
-    const next=bag+1; setBag(next); setAdded(true); localStorage.setItem("leshe-bag-count",String(next)); setTimeout(()=>setAdded(false),900);
+    const raw=localStorage.getItem("leshe-bag-items");
+    const items:CartItem[]=raw?JSON.parse(raw):[];
+    const index=items.findIndex(item=>item.product_id===product.id && item.size===size);
+    if(index>=0) items[index].quantity=Math.min(items[index].quantity+1,product.stock);
+    else items.push({product_id:product.id,slug:product.slug,name:product.name,price:product.price,image_url:product.image_url,quantity:1,size});
+    const total=items.reduce((sum,item)=>sum+item.quantity,0);
+    localStorage.setItem("leshe-bag-items",JSON.stringify(items));
+    localStorage.setItem("leshe-bag-count",String(total));
+    setBag(total);setAdded(true);setTimeout(()=>setAdded(false),900);
   };
 
   return <main className={`product-page tone-${product.tone}`}>
