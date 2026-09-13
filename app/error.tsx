@@ -1,12 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-
 export default function GlobalError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  useEffect(() => {
-    // Keep the production error boundary intentionally quiet for customers.
-  }, []);
-
   return (
     <main className="checkout-shell">
       <header className="checkout-header">
