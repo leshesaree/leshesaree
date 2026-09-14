@@ -8,6 +8,7 @@ import "./gallery-polish.css";
 import "./home-cards.css";
 import "./editorial-card-hover.css";
 import "./header-motion.css";
+import "./hero-motion.css";
 import "./admin-products-polish.css";
 import "./account/account-polish.css";
 import "./checkout/checkout-polish.css";
