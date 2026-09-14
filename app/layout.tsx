@@ -13,6 +13,7 @@ import "./card-motion-v2.css";
 import "./product/product-gallery.css";
 import "./bag/bag-motion.css";
 import "./checkout/checkout-motion.css";
+import "./order/order-motion.css";
 import "./global-motion.css";
 import "./mobile-responsive.css";
 import "./admin-products-polish.css";
