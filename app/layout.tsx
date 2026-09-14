@@ -6,6 +6,7 @@ import "./visual-fixes.css";
 import "./visual-v2.css";
 import "./gallery-polish.css";
 import "./home-cards.css";
+import "./admin-products-polish.css";
 import "./account/account-polish.css";
 import "./checkout/checkout-polish.css";
 
