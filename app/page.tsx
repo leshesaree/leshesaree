@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
+import MotionEnhancer from "./motion-enhancer";
 
 type Product = { id: string; slug: string; name: string; price: number; image_url: string | null; category_id: string | null };
 type Category = { id: string; name: string; slug: string };
@@ -67,6 +68,7 @@ export default function Home() {
   const catalogProducts = featuredIds.length ? visibleProducts.filter(product => featuredIds.includes(product.id)) : visibleProducts;
 
   return <main id="top" className="site-shell" style={{ "--mx": `${pointer.x}px`, "--my": `${pointer.y}px` } as React.CSSProperties}>
+    <MotionEnhancer />
     <div className={`cursor ${intro ? "cursor-hidden" : ""}`} aria-hidden="true"><span>VIEW</span></div>
     <div className={`intro ${intro ? "intro-visible" : "intro-hidden"}`} aria-hidden={!intro}><div className="intro-mark">LE SHE</div><div className="intro-count">100</div></div>
 
@@ -92,7 +94,7 @@ export default function Home() {
 
       {loading ? <div className="product-grid product-grid-loading" aria-label="Loading products">{[1,2,3,4].map(item => <div className="product-skeleton" key={item}><div/><span/><span/></div>)}</div> : <div className="product-grid">
         {catalogProducts.map((product, index) => <a className="product-card reveal-card" href={`/product/${product.slug}`} key={product.id} aria-label={`View ${product.name}`}>
-          <div className={`product-image image-${String(index + 1).padStart(2, "0")} tone-${["rose", "stone", "plum", "sand"][index % 4]}`} style={product.image_url ? { backgroundImage: `url(${product.image_url})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}>
+          <div className={`product-image parallax-image image-${String(index + 1).padStart(2, "0")} tone-${["rose", "stone", "plum", "sand"][index % 4]}`} style={product.image_url ? { backgroundImage: `url(${product.image_url})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}>
             {!product.image_url && <span>{product.name.split(" ")[0].toUpperCase()}</span>}
             <i>VIEW</i>
           </div>
