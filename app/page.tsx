@@ -66,7 +66,7 @@ export default function Home() {
   const featured = cms.featured_products;
   const footer = cms.footer;
   const featuredIds = Array.isArray(featured.content_json?.product_ids) ? featured.content_json.product_ids as string[] : [];
-  const catalogProducts = (featuredIds.length ? visibleProducts.filter(product => featuredIds.includes(product.id)) : visibleProducts).slice(0, 4);
+  const catalogProducts = featuredIds.length ? visibleProducts.filter(product => featuredIds.includes(product.id)) : visibleProducts;
 
   return <main id="top" className="site-shell" style={{ "--mx": `${pointer.x}px`, "--my": `${pointer.y}px` } as React.CSSProperties}>
     <MotionEnhancer />
