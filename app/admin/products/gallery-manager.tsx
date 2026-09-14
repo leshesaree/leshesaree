@@ -1,15 +1,71 @@
 "use client";
+
 import { ChangeEvent, useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { uploadProductImage } from "@/lib/product-image-upload";
 
-type Image={id:string;product_id:string;image_url:string;alt_text:string|null;display_order:number;is_primary:boolean};
+type Image = { id:string; product_id:string; image_url:string; alt_text:string|null; display_order:number; is_primary:boolean };
+
 export default function ProductGalleryManager({productId,slug,name}:{productId:string;slug:string;name:string}){
- const [images,setImages]=useState<Image[]>([]);const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");const supabase=getSupabaseBrowserClient();
- async function load(){if(!supabase)return;const {data,error}=await supabase.from("product_images").select("id,product_id,image_url,alt_text,display_order,is_primary").eq("product_id",productId).order("display_order",{ascending:true});if(error)setMessage(error.message);else setImages((data||[]) as Image[])}
+ const [images,setImages]=useState<Image[]>([]);
+ const [busy,setBusy]=useState(false);
+ const [message,setMessage]=useState("");
+ const supabase=getSupabaseBrowserClient();
+
+ async function load(){
+  if(!supabase)return;
+  const {data,error}=await supabase.from("product_images").select("id,product_id,image_url,alt_text,display_order,is_primary").eq("product_id",productId).order("display_order",{ascending:true});
+  if(error)setMessage(error.message);else setImages((data||[]) as Image[]);
+ }
  useEffect(()=>{load()},[productId]);
- async function add(e:ChangeEvent<HTMLInputElement>){const file=e.target.files?.[0];if(!file||!supabase)return;setBusy(true);setMessage("");try{const url=await uploadProductImage(supabase,file,slug);const order=images.length?Math.max(...images.map(x=>x.display_order))+1:0;const {error}=await supabase.from("product_images").insert({product_id:productId,image_url:url,alt_text:name,display_order:order,is_primary:images.length===0});if(error)throw error;await load();setMessage("GALLERY IMAGE ADDED.")}catch(err){setMessage(err instanceof Error?err.message:"IMAGE UPLOAD FAILED.")}finally{setBusy(false);e.target.value=""}}
- async function primary(image:Image){if(!supabase)return;await supabase.from("product_images").update({is_primary:false}).eq("product_id",productId);const {error}=await supabase.from("product_images").update({is_primary:true}).eq("id",image.id);if(error)setMessage(error.message);else{await supabase.from("products").update({image_url:image.image_url,updated_at:new Date().toISOString()}).eq("id",productId);await load();setMessage("PRIMARY IMAGE UPDATED.")}}
- async function remove(image:Image){if(!supabase||!window.confirm("Remove this gallery image?"))return;const {error}=await supabase.from("product_images").delete().eq("id",image.id);if(error){setMessage(error.message);return}const next=images.filter(x=>x.id!==image.id);if(image.is_primary&&next[0])await primary(next[0]);else await load();setMessage("GALLERY IMAGE REMOVED.")}
- return <section className="admin-section"><div className="admin-section-title"><span>GALLERY / {images.length}</span><label className="admin-action">{busy?"UPLOADING…":"ADD IMAGE +"}<input hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={add} disabled={busy}/></label></div>{message&&<div className="admin-empty">{message}</div>}<div className="admin-gallery-grid">{images.map((image,index)=><div className="admin-gallery-card" key={image.id}><img src={image.image_url} alt={image.alt_text||name}/><div><strong>{image.is_primary?"PRIMARY":"IMAGE"} · {index+1}</strong><small>{image.alt_text||name}</small></div><div className="row-actions"><button type="button" className="table-action" onClick={()=>primary(image)} disabled={image.is_primary}>PRIMARY</button><button type="button" className="table-action danger" onClick={()=>remove(image)}>REMOVE</button></div></div>)}</div>{images.length===0&&!message?<div className="admin-empty">NO GALLERY IMAGES YET.</div>:null}</section>;
+
+ async function add(e:ChangeEvent<HTMLInputElement>){
+  const files=Array.from(e.target.files||[]);
+  if(!files.length||!supabase)return;
+  setBusy(true);setMessage("");
+  try{
+   let nextOrder=images.length?Math.max(...images.map(x=>x.display_order))+1:0;
+   for(const file of files){
+    if(file.size>5*1024*1024) throw new Error(`${file.name}: MAXIMUM FILE SIZE IS 5MB.`);
+    const url=await uploadProductImage(supabase,file,slug);
+    const isFirst=images.length===0&&nextOrder===0;
+    const {error}=await supabase.from("product_images").insert({product_id:productId,image_url:url,alt_text:name,display_order:nextOrder,is_primary:isFirst});
+    if(error)throw error;
+    nextOrder+=1;
+   }
+   await load();
+   setMessage(`${files.length} GALLERY IMAGE${files.length>1?"S":""} ADDED. IMAGE 1 = PRIMARY · IMAGE 2 = HOVER.`);
+  }catch(err){setMessage(err instanceof Error?err.message:"IMAGE UPLOAD FAILED.")}
+  finally{setBusy(false);e.target.value=""}
+ }
+
+ async function primary(image:Image){
+  if(!supabase)return;
+  await supabase.from("product_images").update({is_primary:false}).eq("product_id",productId);
+  const {error}=await supabase.from("product_images").update({is_primary:true}).eq("id",image.id);
+  if(error)setMessage(error.message);
+  else{await supabase.from("products").update({image_url:image.image_url,updated_at:new Date().toISOString()}).eq("id",productId);await load();setMessage("PRIMARY IMAGE UPDATED. THE NEXT IMAGE IS USED FOR HOMEPAGE HOVER.")}
+ }
+
+ async function remove(image:Image){
+  if(!supabase||!window.confirm("Remove this gallery image?"))return;
+  const {error}=await supabase.from("product_images").delete().eq("id",image.id);
+  if(error){setMessage(error.message);return}
+  const next=images.filter(x=>x.id!==image.id);
+  if(image.is_primary&&next[0])await primary(next[0]);else await load();
+  setMessage("GALLERY IMAGE REMOVED.");
+ }
+
+ return <section className="admin-section admin-gallery-section">
+  <div className="admin-section-title"><div><span>PRODUCT GALLERY / {images.length}</span><small className="admin-gallery-hint">UPLOAD MULTIPLE PHOTOS · IMAGE 1 PRIMARY · IMAGE 2 HOMEPAGE HOVER</small></div><label className="admin-action admin-upload-trigger">{busy?"UPLOADING…":"ADD PHOTOS +"}<input hidden multiple type="file" accept="image/jpeg,image/png,image/webp" onChange={add} disabled={busy}/></label></div>
+  {message&&<div className="admin-empty">{message}</div>}
+  <div className="admin-gallery-grid">
+   {images.map((image,index)=><div className="admin-gallery-card" key={image.id}>
+    <div className="admin-gallery-media"><img src={image.image_url} alt={image.alt_text||name}/><span>{image.is_primary?"PRIMARY":index===1?"HOVER":"GALLERY"}</span></div>
+    <div><strong>IMAGE {index+1}</strong><small>{index===0?"Homepage default":index===1?"Homepage mouse hover":"Product gallery"}</small></div>
+    <div className="row-actions"><button type="button" className="table-action" onClick={()=>primary(image)} disabled={image.is_primary}>{image.is_primary?"PRIMARY":"MAKE PRIMARY"}</button><button type="button" className="table-action danger" onClick={()=>remove(image)}>REMOVE</button></div>
+   </div>)}
+  </div>
+  {images.length===0&&!message?<div className="admin-empty">NO GALLERY IMAGES YET. ADD AT LEAST 2 PHOTOS FOR THE REFERENCE-STYLE HOMEPAGE HOVER.</div>:null}
+ </section>;
 }
