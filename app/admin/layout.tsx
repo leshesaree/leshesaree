@@ -12,6 +12,7 @@ const nav = [
   ["Orders", "/admin/orders"],
   ["Customers", "/admin/customers"],
   ["Marketing", "/admin/marketing"],
+  ["Reviews", "/admin/reviews"],
   ["Website / CMS", "/admin/cms"],
   ["Settings", "/admin/settings"],
 ];
