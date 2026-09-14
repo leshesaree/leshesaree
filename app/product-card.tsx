@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
+import styles from "./product-card.module.css";
 
 type ProductImage = { image_url: string; display_order: number; is_primary: boolean };
 type Product = { id: string; slug: string; name: string; price: number; image_url: string | null };
@@ -22,8 +23,7 @@ export default function ProductCard({ product, index }: { product: Product; inde
         .order("display_order", { ascending: true });
       if (!active) return;
       const gallery = ((data || []) as ProductImage[]).map((image) => image.image_url).filter(Boolean);
-      const urls = Array.from(new Set([...(product.image_url ? [product.image_url] : []), ...gallery]));
-      setImages(urls);
+      setImages(Array.from(new Set([...(product.image_url ? [product.image_url] : []), ...gallery])));
     };
     load();
     return () => { active = false; };
@@ -34,19 +34,15 @@ export default function ProductCard({ product, index }: { product: Product; inde
   const tone = ["rose", "stone", "plum", "sand"][index % 4];
 
   return (
-    <a className="product-card reveal-card" href={`/product/${product.slug}`} aria-label={`View ${product.name}`}>
-      <div className={`product-image product-image-swap tone-${tone}`}>
-        {primary ? (
-          <>
-            <img className="product-card-image product-card-image-primary" src={primary} alt={product.name} />
-            <img className="product-card-image product-card-image-hover" src={hover || primary} alt="" aria-hidden="true" />
-          </>
-        ) : (
-          <span>{product.name.split(" ")[0].toUpperCase()}</span>
-        )}
+    <a className={`${styles.card} reveal-card`} href={`/product/${product.slug}`} aria-label={`View ${product.name}`}>
+      <div className={`${styles.image} tone-${tone}`}>
+        {primary ? <>
+          <img className={`${styles.photo} ${styles.primary}`} src={primary} alt={product.name} />
+          <img className={`${styles.photo} ${styles.hover}`} src={hover || primary} alt="" aria-hidden="true" />
+        </> : <span className={styles.fallback}>{product.name.split(" ")[0].toUpperCase()}</span>}
         <i>VIEW</i>
       </div>
-      <div className="product-meta"><span>{product.name}</span><span>₹ {Number(product.price).toLocaleString("en-IN")}</span></div>
+      <div className={styles.meta}><span>{product.name}</span><span>₹ {Number(product.price).toLocaleString("en-IN")}</span></div>
     </a>
   );
 }
