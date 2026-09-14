@@ -1,11 +1,11 @@
-/* TASK 9 — mobile-first responsive polish */
-@media (max-width: 700px){
+/* TASK 9 — mobile-first responsive polish v2 */
+@media (max-width:700px){
   html{scroll-padding-top:72px;overflow-x:hidden}
   body{overflow-x:hidden}
-  .topbar{height:64px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(238,231,225,.82);mix-blend-mode:normal}
-  .wordmark{font-size:1rem}
-  .topbar nav{gap:0;justify-content:flex-end}
-  .topbar nav a{padding:10px 7px;font-size:.72rem;min-height:44px;display:flex;align-items:center}
+  .topbar{height:64px;padding-left:16px;padding-right:16px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(238,231,225,.86);mix-blend-mode:normal}
+  .wordmark{font-size:1rem;line-height:.86;flex-shrink:0}
+  .topbar nav{gap:0;justify-content:flex-end;min-width:0}
+  .topbar nav a{padding:10px 7px;font-size:.72rem;min-height:44px;display:flex;align-items:center;white-space:nowrap}
   .hero{min-height:100svh;padding-top:96px;padding-bottom:34px}
   .hero h1{font-size:clamp(4.5rem,20vw,8rem);line-height:.72;word-break:normal}
   .hero-copy{font-size:1rem;line-height:1.08;margin:42px 0 22px;max-width:280px}
@@ -13,15 +13,17 @@
   .collection{padding-top:76px;padding-bottom:80px}
   .section-head{padding-bottom:22px}
   .product-grid{gap:42px 0}
+  .product-grid>a{width:100%;min-width:0}
   .product-card{cursor:auto}
   .product-image{aspect-ratio:4/5}
   .product-image i{opacity:1;right:12px;bottom:12px;transform:none;font-size:.58rem}
-  .product-meta{padding:12px 0 0;font-size:.78rem}
+  .product-meta{padding:12px 0 0;font-size:.78rem;gap:12px}
+  .product-meta span:last-child{white-space:nowrap}
   .statement{min-height:72svh;padding-top:55px;padding-bottom:55px}
   .statement strong{font-size:21vw;max-width:100%;line-height:.7}
   footer{padding-top:70px}
   .footer-big{font-size:23vw}
-  .footer-bottom{gap:12px;font-size:.65rem}
+  .footer-bottom{gap:12px;font-size:.65rem;flex-wrap:wrap}
   .product-detail{padding-top:100px}
   .product-visual{width:100%}
   .product-info h1{font-size:18vw}
@@ -41,6 +43,11 @@
   .checkout-form label{font-size:.62rem}
   .checkout-button{margin-top:8px}
   .admin-sidebar nav a{min-height:48px;align-items:center}
+  .order-confirmation{min-height:calc(100svh - 64px);padding:105px 18px 45px}
+  .order-confirmation h1{font-size:20vw;line-height:.78;overflow-wrap:anywhere}
+  .order-confirmation .order-message{max-width:310px;font-size:.95rem}
+  .order-confirmation .order-actions{width:100%;max-width:320px;margin-inline:auto}
+  .order-confirmation .order-actions a{min-height:52px;align-items:center;justify-content:center}
 }
 @media (max-width:380px){
   .topbar{padding-left:12px;padding-right:12px}
