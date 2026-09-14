@@ -9,6 +9,7 @@ import "./home-cards.css";
 import "./editorial-card-hover.css";
 import "./header-motion.css";
 import "./hero-motion.css";
+import "./card-motion-v2.css";
 import "./admin-products-polish.css";
 import "./account/account-polish.css";
 import "./checkout/checkout-polish.css";
