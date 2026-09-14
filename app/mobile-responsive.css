@@ -1,0 +1,59 @@
+/* TASK 9 — mobile-first responsive polish */
+@media (max-width: 700px){
+  html{scroll-padding-top:72px;overflow-x:hidden}
+  body{overflow-x:hidden}
+  .topbar{height:64px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(238,231,225,.82);mix-blend-mode:normal}
+  .wordmark{font-size:1rem}
+  .topbar nav{gap:0;justify-content:flex-end}
+  .topbar nav a{padding:10px 7px;font-size:.72rem;min-height:44px;display:flex;align-items:center}
+  .hero{min-height:100svh;padding-top:96px;padding-bottom:34px}
+  .hero h1{font-size:clamp(4.5rem,20vw,8rem);line-height:.72;word-break:normal}
+  .hero-copy{font-size:1rem;line-height:1.08;margin:42px 0 22px;max-width:280px}
+  .hero-link{font-size:.8rem;padding:10px 0;min-height:44px;display:flex;align-items:center}
+  .collection{padding-top:76px;padding-bottom:80px}
+  .section-head{padding-bottom:22px}
+  .product-grid{gap:42px 0}
+  .product-card{cursor:auto}
+  .product-image{aspect-ratio:4/5}
+  .product-image i{opacity:1;right:12px;bottom:12px;transform:none;font-size:.58rem}
+  .product-meta{padding:12px 0 0;font-size:.78rem}
+  .statement{min-height:72svh;padding-top:55px;padding-bottom:55px}
+  .statement strong{font-size:21vw;max-width:100%;line-height:.7}
+  footer{padding-top:70px}
+  .footer-big{font-size:23vw}
+  .footer-bottom{gap:12px;font-size:.65rem}
+  .product-detail{padding-top:100px}
+  .product-visual{width:100%}
+  .product-info h1{font-size:18vw}
+  .description{margin:35px 0;max-width:320px}
+  .sizes{flex-wrap:wrap}
+  .sizes button{min-width:48px;min-height:46px;padding:10px 14px}
+  .add-button,.checkout-button{min-height:56px;padding:17px 16px}
+  .bag-content{gap:40px}
+  .bag-copy h1{font-size:18vw;margin-bottom:38px}
+  .quantity button{min-width:44px;min-height:44px}
+  .checkout-header{height:72px}
+  .checkout-grid{min-height:auto;padding:42px 0 55px}
+  .checkout-intro{min-height:auto;padding-bottom:35px}
+  .checkout-intro h1,.order-success h2{font-size:20vw}
+  .checkout-form{gap:20px;padding-top:0}
+  .checkout-form input,.checkout-form textarea{font-size:16px;padding:12px 0}
+  .checkout-form label{font-size:.62rem}
+  .checkout-button{margin-top:8px}
+  .admin-sidebar nav a{min-height:48px;align-items:center}
+}
+@media (max-width:380px){
+  .topbar{padding-left:12px;padding-right:12px}
+  .topbar nav a{padding-left:5px;padding-right:5px;font-size:.66rem}
+  .hero h1{font-size:19vw}
+  .hero-copy{max-width:250px}
+}
+@media (min-width:701px) and (max-width:1100px){
+  .hero h1{font-size:15vw}
+  .product-detail{gap:35px}
+  .product-info h1{font-size:7vw}
+}
+@media (prefers-reduced-motion:reduce){
+  .topbar{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .product-card:hover .product-image,.product-card:hover .product-image span,.product-card:hover .product-image img{transform:none}
+}
