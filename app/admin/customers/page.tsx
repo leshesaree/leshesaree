@@ -1,55 +1,8 @@
 "use client";
-
-import { useEffect, useMemo, useState } from "react";
-import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
-
-type Customer = { id: string; full_name: string | null; created_at: string };
-type Order = { id: string; email: string; customer_name: string; total: number; created_at: string };
-
-export default function CustomersPage() {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [query, setQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function load() {
-      const supabase = getSupabaseBrowserClient();
-      if (!supabase) { setLoading(false); return; }
-      const [{ data: customerData }, { data: orderData }] = await Promise.all([
-        supabase.from("profiles").select("id,full_name,created_at").eq("role", "customer").order("created_at", { ascending: false }),
-        supabase.from("orders").select("id,email,customer_name,total,created_at").order("created_at", { ascending: false }).limit(200),
-      ]);
-      setCustomers((customerData || []) as Customer[]);
-      setOrders((orderData || []) as Order[]);
-      setLoading(false);
-    }
-    load();
-  }, []);
-
-  const visibleCustomers = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return customers;
-    return customers.filter((customer) => (customer.full_name || "").toLowerCase().includes(q) || customer.id.toLowerCase().includes(q));
-  }, [customers, query]);
-  const uniqueEmails = new Set(orders.map((order) => order.email.toLowerCase())).size;
-  const orderValue = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
-
-  return <div className="admin-page">
-    <header className="admin-page-head"><div><span className="admin-eyebrow">06 — CUSTOMERS</span><h1>People who <i>shop.</i></h1><p>Customer accounts and recent purchasing activity.</p></div><span className="admin-live">{loading ? "LOADING…" : `${customers.length} ACCOUNTS`}</span></header>
-    <section className="admin-metrics">
-      <article><span>ACCOUNTS</span><strong>{customers.length}</strong></article>
-      <article><span>BUYERS IN ORDERS</span><strong>{uniqueEmails}</strong></article>
-      <article><span>RECENT ORDER VALUE</span><strong>₹ {orderValue.toLocaleString("en-IN")}</strong></article>
-    </section>
-    <div className="admin-toolbar"><input className="admin-search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search customer name or account ID…" /></div>
-    <section className="customer-panel">
-      <div className="admin-section-title"><span>CUSTOMER ACCOUNTS</span><span>{visibleCustomers.length}</span></div>
-      {loading ? <div className="admin-empty">Loading customers…</div> : visibleCustomers.length === 0 ? <div className="admin-empty"><h2>No matching customers.</h2><p>Customer accounts will appear here after signup.</p></div> : visibleCustomers.map((customer) => <article className="customer-row" key={customer.id}><div><strong>{customer.full_name || "Unnamed customer"}</strong><small>Joined {new Date(customer.created_at).toLocaleDateString("en-IN")}</small></div><span>{customer.id.slice(0, 8)}…</span></article>)}
-    </section>
-    <section className="customer-panel">
-      <div className="admin-section-title"><span>RECENT ORDERS</span><span>{orders.length}</span></div>
-      {orders.length === 0 ? <div className="admin-empty">No orders yet.</div> : orders.slice(0, 12).map((order) => <article className="customer-row" key={order.id}><div><strong>{order.customer_name}</strong><small>{order.email} · {new Date(order.created_at).toLocaleDateString("en-IN")}</small></div><strong>₹ {Number(order.total).toLocaleString("en-IN")}</strong></article>)}
-    </section>
-  </div>;
-}
+import {useEffect,useMemo,useState} from "react";
+import {getSupabaseBrowserClient} from "@/lib/supabase-browser";
+type Customer={id:string;full_name:string|null;created_at:string};type Order={id:string;email:string;customer_name:string;total:number;status:string;payment_status:string;created_at:string};
+export default function CustomersPage(){const[c,setC]=useState<Customer[]>([]),[o,setO]=useState<Order[]>([]),[q,setQ]=useState(""),[selected,setSelected]=useState<Customer|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState("");
+ async function load(){const s=getSupabaseBrowserClient();if(!s){setLoading(false);setError("SUPABASE CONNECTION IS NOT CONFIGURED.");return}setLoading(true);const[a,b]=await Promise.all([s.from("profiles").select("id,full_name,created_at").eq("role","customer").order("created_at",{ascending:false}),s.from("orders").select("id,email,customer_name,total,status,payment_status,created_at").order("created_at",{ascending:false}).limit(500)]);if(a.error)setError(a.error.message);else setC((a.data||[])as Customer[]);if(b.error)setError(b.error.message);else setO((b.data||[])as Order[]);setLoading(false)}
+ useEffect(()=>{load()},[]);const visible=useMemo(()=>{const x=q.trim().toLowerCase();return c.filter(v=>!x||(v.full_name||"").toLowerCase().includes(x)||v.id.toLowerCase().includes(x))},[c,q]);const emails=new Set(o.map(x=>x.email.toLowerCase())).size;const value=o.reduce((s,x)=>s+Number(x.total||0),0);const customerOrders=selected?o.filter(x=>x.email&&selected.full_name&&x.customer_name.toLowerCase()===selected.full_name.toLowerCase()):[];
+ return <div className="admin-page"><header className="admin-page-head"><div><span className="admin-eyebrow">07 — CUSTOMERS</span><h1>People who <i>shop.</i></h1><p>Customer accounts, buying activity and account-level visibility.</p></div><button className="admin-action" onClick={load}>REFRESH ↻</button></header><section className="stat-grid"><div className="stat-card"><strong>{c.length}</strong><span>Customer accounts</span></div><div className="stat-card"><strong>{emails}</strong><span>Unique buyers</span></div><div className="stat-card"><strong>₹ {value.toLocaleString("en-IN")}</strong><span>Order value</span></div><div className="stat-card"><strong>{o.length}</strong><span>Orders</span></div></section><div className="admin-toolbar"><input className="admin-search" value={q} onChange={e=>setQ(e.target.value)} placeholder="Search customer name or account ID…"/></div>{error&&<div className="admin-notice">{error}</div>}<section className="customer-panel"><div className="admin-section-title"><span>CUSTOMER ACCOUNTS</span><span>{visible.length}</span></div>{loading?<div className="admin-empty">LOADING CUSTOMERS…</div>:visible.length===0?<div className="admin-empty"><h2>No matching customers.</h2><p>Customer accounts will appear here after signup.</p></div>:visible.map(x=><button className="customer-row" key={x.id} onClick={()=>setSelected(x)}><div><strong>{x.full_name||"Unnamed customer"}</strong><small>Joined {new Date(x.created_at).toLocaleDateString("en-IN")}</small></div><span>{x.id.slice(0,8)}…</span></button>)}</section><section className="customer-panel"><div className="admin-section-title"><span>RECENT ORDERS</span><span>{Math.min(o.length,20)}</span></div>{o.length===0?<div className="admin-empty">No orders yet.</div>:o.slice(0,20).map(x=><article className="customer-row" key={x.id}><div><strong>{x.customer_name}</strong><small>{x.email} · {x.status} · {new Date(x.created_at).toLocaleDateString("en-IN")}</small></div><strong>₹ {Number(x.total).toLocaleString("en-IN")}</strong></article>)}</section>{selected&&<div className="order-drawer-backdrop" onClick={()=>setSelected(null)}><aside className="order-drawer" onClick={e=>e.stopPropagation()}><button className="drawer-close" onClick={()=>setSelected(null)}>CLOSE ×</button><span className="admin-eyebrow">CUSTOMER / {selected.id.slice(0,8).toUpperCase()}</span><h2>{selected.full_name||"Unnamed customer"}</h2><div className="drawer-meta"><p>Account ID: {selected.id}</p><p>Joined {new Date(selected.created_at).toLocaleString("en-IN")}</p></div><div className="drawer-items"><strong>ORDER HISTORY</strong>{customerOrders.length===0?<p>No matching order history found.</p>:customerOrders.map(x=><div className="drawer-item" key={x.id}><span>#{x.id.slice(0,8).toUpperCase()}<small>{x.status} · payment {x.payment_status}</small></span><strong>₹ {Number(x.total).toLocaleString("en-IN")}</strong></div>)}</div></aside></div>}</div>}
