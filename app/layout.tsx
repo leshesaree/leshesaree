@@ -4,6 +4,7 @@ import "./globals.css";
 import "./storefront-polish.css";
 import "./visual-fixes.css";
 import "./visual-v2.css";
+import "./gallery-polish.css";
 import "./account/account-polish.css";
 import "./checkout/checkout-polish.css";
 
