@@ -6,6 +6,7 @@ import "./visual-fixes.css";
 import "./visual-v2.css";
 import "./gallery-polish.css";
 import "./home-cards.css";
+import "./editorial-card-hover.css";
 import "./admin-products-polish.css";
 import "./account/account-polish.css";
 import "./checkout/checkout-polish.css";
@@ -30,7 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body>
         {children}
-        {gaId ? <><Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="afterInteractive" /><Script id="google-analytics" strategy="afterInteractive">{`window.dataLayer = window.dataLayer || []; function gtag(){window.dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${gaId}', { send_page_view: true });`}</Script></> : null}
+        {gaId ? <><Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="afterInteractive" /><Script id="google-analytics" strategy="afterInteractive">{`window.dataLayer = window.dataLayer || []; function gtag(){window.dataLayer = window.dataLayer || []; } gtag('js', new Date()); gtag('config', '${gaId}', { send_page_view: true });`}</Script></> : null}
       </body>
     </html>
   );
