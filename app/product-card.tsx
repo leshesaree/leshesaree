@@ -34,7 +34,7 @@ export default function ProductCard({ product, index }: { product: Product; inde
   const tone = ["rose", "stone", "plum", "sand"][index % 4];
 
   return (
-    <a className={`${styles.card} reveal-card`} href={`/product/${product.slug}`} aria-label={`View ${product.name}`}>
+    <a className={styles.card} href={`/product/${product.slug}`} aria-label={`View ${product.name}`}>
       <div className={`${styles.image} tone-${tone}`}>
         {primary ? <>
           <img className={`${styles.photo} ${styles.primary}`} src={primary} alt={product.name} />
