@@ -12,6 +12,7 @@ import "./hero-motion.css";
 import "./card-motion-v2.css";
 import "./product/product-gallery.css";
 import "./bag/bag-motion.css";
+import "./checkout/checkout-motion.css";
 import "./admin-products-polish.css";
 import "./account/account-polish.css";
 import "./checkout/checkout-polish.css";
