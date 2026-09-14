@@ -1,0 +1,109 @@
+"use client";
+
+import { FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+
+type Order = {
+  id: string;
+  customer_name: string | null;
+  status: string | null;
+  payment_status: string | null;
+  total: number | null;
+  created_at: string;
+};
+
+export default function AccountPage() {
+  const [email, setEmail] = useState("");
+  const [user, setUser] = useState<{ id: string; email?: string | null } | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!mounted) return;
+      const currentUser = data.user;
+      setUser(currentUser ? { id: currentUser.id, email: currentUser.email } : null);
+      if (currentUser) {
+        const { data: rows, error: orderError } = await supabase
+          .from("orders")
+          .select("id,customer_name,status,payment_status,total,created_at")
+          .eq("customer_id", currentUser.id)
+          .order("created_at", { ascending: false });
+        if (orderError) setError(orderError.message);
+        else setOrders((rows || []) as Order[]);
+      }
+      setLoading(false);
+    });
+    return () => { mounted = false; };
+  }, []);
+
+  async function sendLogin(e: FormEvent) {
+    e.preventDefault();
+    setSending(true);
+    setMessage("");
+    setError("");
+    const { error: authError } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: `${window.location.origin}/account/auth/callback` },
+    });
+    if (authError) setError(authError.message);
+    else setMessage("Login link sent. Check your email to continue.");
+    setSending(false);
+  }
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    setUser(null);
+    setOrders([]);
+  }
+
+  if (loading) return <main className="account-shell"><p>Loading your account…</p></main>;
+
+  return (
+    <main className="account-shell">
+      <header className="account-header">
+        <Link href="/" className="account-brand">LE SHE SAREE</Link>
+        {user && <button onClick={signOut} className="account-action">Sign out</button>}
+      </header>
+
+      {!user ? (
+        <section className="account-card">
+          <p className="account-eyebrow">YOUR ACCOUNT</p>
+          <h1>Welcome back.</h1>
+          <p>Sign in with your email to view your LE SHE SAREE orders.</p>
+          <form onSubmit={sendLogin} className="account-form">
+            <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
+            <button disabled={sending} type="submit">{sending ? "Sending…" : "Send login link"}</button>
+          </form>
+          {message && <p className="account-success">{message}</p>}
+          {error && <p className="account-error">{error}</p>}
+        </section>
+      ) : (
+        <section className="account-card">
+          <p className="account-eyebrow">MY ORDERS</p>
+          <h1>Your orders.</h1>
+          <p>{user.email}</p>
+          {error && <p className="account-error">{error}</p>}
+          {orders.length === 0 ? (
+            <div className="account-empty"><p>No orders found yet.</p><Link href="/">Continue shopping →</Link></div>
+          ) : (
+            <div className="order-list">
+              {orders.map((order) => (
+                <article key={order.id} className="order-row">
+                  <div><strong>#{order.id.slice(0, 8).toUpperCase()}</strong><span>{new Date(order.created_at).toLocaleDateString()}</span></div>
+                  <div><span>{order.status || "pending"}</span><strong>₹{Number(order.total || 0).toFixed(2)}</strong></div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+    </main>
+  );
+}
+
