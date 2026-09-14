@@ -13,9 +13,11 @@ import "./card-motion-v2.css";
 import "./product/product-gallery.css";
 import "./bag/bag-motion.css";
 import "./checkout/checkout-motion.css";
+import "./global-motion.css";
 import "./admin-products-polish.css";
 import "./account/account-polish.css";
 import "./checkout/checkout-polish.css";
+import GlobalMotion from "./global-motion";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://leshesaree.com";
 const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
@@ -36,6 +38,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
+        <GlobalMotion />
         {children}
         {gaId ? <><Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="afterInteractive" /><Script id="google-analytics" strategy="afterInteractive">{`window.dataLayer = window.dataLayer || []; function gtag(){window.dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${gaId}', { send_page_view: true });`}</Script></> : null}
       </body>
