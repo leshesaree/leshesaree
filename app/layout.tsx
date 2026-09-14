@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import "./storefront-polish.css";
+import "./visual-fixes.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://leshesaree.com";
 const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
