@@ -16,18 +16,6 @@ export default function AnalyticsTracker() {
     if (/^\/product\//.test(pathname)) {
       trackEvent("view_item", { item_slug: pathname.split("/").filter(Boolean).pop() });
     }
-    if (/^\/order\//.test(pathname)) {
-      const key = `leshe-purchase-tracked:${pathname}`;
-      if (!sessionStorage.getItem(key)) {
-        try {
-          const order = JSON.parse(localStorage.getItem("leshe-last-order") || "null");
-          if (order?.total != null) {
-            trackEvent("purchase", { value: Number(order.total), currency: "INR", items: Array.isArray(order.items) ? order.items.length : undefined });
-            sessionStorage.setItem(key, "1");
-          }
-        } catch {}
-      }
-    }
   }, [pathname]);
 
   useEffect(() => {
