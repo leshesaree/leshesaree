@@ -1,73 +1,23 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
+import { uploadCategoryImage } from "@/lib/category-image-upload";
 
-type Category = { id: string; name: string; slug: string; description: string | null; display_order: number; is_active: boolean };
+type Category = { id: string; name: string; slug: string; description: string | null; image_url: string | null; banner_url: string | null; display_order: number; is_active: boolean };
+const blank={name:"",slug:"",description:"",image:"",banner:"",order:"0"};
 
 export default function CategoriesAdminPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
-  const [description, setDescription] = useState("");
-  const [order, setOrder] = useState("0");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-
-  async function load() {
-    setLoading(true);
-    const supabase = getSupabaseBrowserClient();
-    if (!supabase) { setMessage("SUPABASE ENVIRONMENT VARIABLES ARE NOT CONFIGURED."); setLoading(false); return; }
-    const { data, error } = await supabase.from("categories").select("id,name,slug,description,display_order,is_active").order("display_order", { ascending: true });
-    if (error) setMessage(error.message.toUpperCase()); else setCategories((data as Category[]) || []);
-    setLoading(false);
-  }
-
-  useEffect(() => { load(); }, []);
-
-  function makeSlug(value: string) {
-    return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-  }
-
-  async function addCategory(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSaving(true); setMessage("");
-    const supabase = getSupabaseBrowserClient();
-    if (!supabase) { setMessage("SUPABASE ENVIRONMENT VARIABLES ARE NOT CONFIGURED."); setSaving(false); return; }
-    const { error } = await supabase.from("categories").insert({ name: name.trim(), slug: slug.trim() || makeSlug(name), description: description.trim() || null, display_order: Number(order) || 0, is_active: true });
-    if (error) setMessage(error.message.toUpperCase());
-    else { setName(""); setSlug(""); setDescription(""); setOrder("0"); setMessage("CATEGORY CREATED."); await load(); }
-    setSaving(false);
-  }
-
-  async function toggle(id: string, active: boolean) {
-    const supabase = getSupabaseBrowserClient(); if (!supabase) return;
-    const { error } = await supabase.from("categories").update({ is_active: !active }).eq("id", id);
-    if (error) setMessage(error.message.toUpperCase()); else load();
-  }
-
-  async function remove(id: string) {
-    if (!window.confirm("Delete this category? Products linked to it may prevent deletion.")) return;
-    const supabase = getSupabaseBrowserClient(); if (!supabase) return;
-    const { error } = await supabase.from("categories").delete().eq("id", id);
-    if (error) setMessage(error.message.toUpperCase()); else load();
-  }
-
-  return <div className="admin-dashboard">
-    <header className="admin-header"><div><span>03 — CATALOG</span><h1>CATEGORY<br/><i>ROOM.</i></h1></div><div className="admin-status"><span className="status-dot"/> SUPABASE / LIVE<br/><small>CATEGORY MANAGEMENT</small></div></header>
-    <section className="admin-section"><div className="admin-section-title"><span>ADD CATEGORY</span><span>CATALOG / CORE</span></div>
-      <form className="admin-form" onSubmit={addCategory}>
-        <label>Name<input required value={name} onChange={e => setName(e.target.value)} placeholder="Sarees" /></label>
-        <label>Slug<input value={slug} onChange={e => setSlug(e.target.value)} placeholder="sarees" /></label>
-        <label>Description<textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Category description" rows={2} /></label>
-        <label>Display order<input type="number" min="0" value={order} onChange={e => setOrder(e.target.value)} /></label>
-        <button className="admin-action admin-submit" disabled={saving}>{saving ? "SAVING…" : "CREATE CATEGORY →"}</button>
-      </form>
-      {message && <div className="admin-empty">{message}</div>}
-    </section>
-    <section className="admin-section"><div className="admin-section-title"><span>CATEGORIES</span><button className="admin-action" onClick={load}>REFRESH ↻</button></div>
-      {loading ? <div className="admin-empty">LOADING…</div> : categories.length === 0 ? <div className="admin-empty">NO CATEGORIES YET.</div> : <div className="admin-table"><div className="admin-row admin-row-head"><span>NAME</span><span>SLUG</span><span>ORDER</span><span>STATUS</span><span>ACTION</span></div>{categories.map(c => <div className="admin-row" key={c.id}><strong>{c.name}</strong><span>{c.slug}</span><span>{c.display_order}</span><button className="table-action" onClick={() => toggle(c.id, c.is_active)}>{c.is_active ? "ACTIVE" : "HIDDEN"}</button><button className="table-action danger" onClick={() => remove(c.id)}>DELETE</button></div>)}</div>}
-    </section>
-  </div>;
+  const [categories,setCategories]=useState<Category[]>([]),[form,setForm]=useState(blank),[editing,setEditing]=useState<string|null>(null),[message,setMessage]=useState(""),[loading,setLoading]=useState(true),[saving,setSaving]=useState(false),[uploading,setUploading]=useState<"image"|"banner"|null>(null);
+  async function load(){setLoading(true);const s=getSupabaseBrowserClient();if(!s){setMessage("SUPABASE ENVIRONMENT VARIABLES ARE NOT CONFIGURED.");setLoading(false);return;}const{data,error}=await s.from("categories").select("id,name,slug,description,image_url,banner_url,display_order,is_active").order("display_order",{ascending:true});if(error)setMessage(error.message.toUpperCase());else setCategories((data as Category[])||[]);setLoading(false);}
+  useEffect(()=>{load();},[]);
+  function makeSlug(value:string){return value.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");}
+  function change(key:keyof typeof blank,value:string){setForm(f=>({...f,[key]:value}));}
+  function edit(c:Category){setEditing(c.id);setForm({name:c.name,slug:c.slug,description:c.description||"",image:c.image_url||"",banner:c.banner_url||"",order:String(c.display_order)});window.scrollTo({top:0,behavior:"smooth"});}
+  function reset(){setEditing(null);setForm(blank);}
+  async function upload(kind:"image"|"banner",e:ChangeEvent<HTMLInputElement>){const file=e.target.files?.[0];if(!file)return;setUploading(kind);setMessage("");const s=getSupabaseBrowserClient();if(!s){setMessage("SUPABASE ENVIRONMENT VARIABLES ARE NOT CONFIGURED.");setUploading(null);return;}try{const url=await uploadCategoryImage(s,file,form.slug.trim()||makeSlug(form.name)||"category",kind);change(kind,url);setMessage(`${kind.toUpperCase()} UPLOADED.`);}catch(error){setMessage(error instanceof Error?error.message.toUpperCase():"IMAGE UPLOAD FAILED.");}finally{setUploading(null);e.target.value="";}}
+  async function save(event:FormEvent<HTMLFormElement>){event.preventDefault();setSaving(true);setMessage("");const s=getSupabaseBrowserClient();if(!s){setMessage("SUPABASE ENVIRONMENT VARIABLES ARE NOT CONFIGURED.");setSaving(false);return;}const name=form.name.trim(),slug=form.slug.trim()||makeSlug(name);if(!name||!slug){setMessage("CATEGORY NAME IS REQUIRED.");setSaving(false);return;}const payload={name,slug,description:form.description.trim()||null,image_url:form.image.trim()||null,banner_url:form.banner.trim()||null,display_order:Math.max(0,Math.floor(Number(form.order)||0)),is_active:true};const result=editing?await s.from("categories").update(payload).eq("id",editing):await s.from("categories").insert(payload);if(result.error)setMessage(result.error.message.toUpperCase());else{setMessage(editing?"CATEGORY UPDATED.":"CATEGORY CREATED.");reset();await load();}setSaving(false);}
+  async function toggle(id:string,active:boolean){const s=getSupabaseBrowserClient();if(!s)return;const{error}=await s.from("categories").update({is_active:!active}).eq("id",id);if(error)setMessage(error.message.toUpperCase());else load();}
+  async function remove(id:string){if(!window.confirm("Delete this category? Products linked to it may prevent deletion."))return;const s=getSupabaseBrowserClient();if(!s)return;const{error}=await s.from("categories").delete().eq("id",id);if(error)setMessage(error.message.toUpperCase());else load();}
+  return <div className="admin-dashboard"><header className="admin-header"><div><span>03 — CATALOG</span><h1>CATEGORY<br/><i>ROOM.</i></h1></div><div className="admin-status"><span className="status-dot"/> SUPABASE / LIVE<br/><small>CATEGORY MANAGEMENT</small></div></header><section className="admin-section"><div className="admin-section-title"><span>{editing?"EDIT CATEGORY":"ADD CATEGORY"}</span><span>CATALOG / CORE</span></div><form className="admin-form" onSubmit={save}><label>Name<input required value={form.name} onChange={e=>change("name",e.target.value)} placeholder="Sarees"/></label><label>Slug<input value={form.slug} onChange={e=>change("slug",e.target.value)} placeholder="sarees"/></label><label>Description<textarea value={form.description} onChange={e=>change("description",e.target.value)} rows={2}/></label><label>Display order<input type="number" min="0" value={form.order} onChange={e=>change("order",e.target.value)}/></label><label>Category image<input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>upload("image",e)} disabled={uploading!==null}/></label>{form.image&&<div className="admin-image-preview"><img src={form.image} alt="Category preview"/><button type="button" className="table-action" onClick={()=>change("image","")}>REMOVE IMAGE</button></div>}<label>Category banner<input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>upload("banner",e)} disabled={uploading!==null}/><small>{uploading?`UPLOADING ${uploading.toUpperCase()}…`:"JPG, PNG or WEBP · MAX 5MB"}</small></label>{form.banner&&<div className="admin-image-preview"><img src={form.banner} alt="Category banner preview"/><button type="button" className="table-action" onClick={()=>change("banner","")}>REMOVE BANNER</button></div>}<div className="form-actions"><button className="admin-action admin-submit" disabled={saving||uploading!==null}>{saving?"SAVING…":editing?"UPDATE CATEGORY →":"CREATE CATEGORY →"}</button>{editing&&<button type="button" className="admin-action" onClick={reset}>CANCEL</button>}</div></form>{message&&<div className="admin-empty">{message}</div>}</section><section className="admin-section"><div className="admin-section-title"><span>CATEGORIES</span><button className="admin-action" onClick={load}>REFRESH ↻</button></div>{loading?<div className="admin-empty">LOADING…</div>:categories.length===0?<div className="admin-empty">NO CATEGORIES YET.</div>:<div className="admin-table"><div className="admin-row admin-row-head"><span>NAME</span><span>SLUG</span><span>ORDER</span><span>STATUS</span><span>ACTION</span></div>{categories.map(c=><div className="admin-row" key={c.id}><strong>{c.name}</strong><span>{c.slug}</span><span>{c.display_order}</span><button className="table-action" onClick={()=>toggle(c.id,c.is_active)}>{c.is_active?"ACTIVE":"HIDDEN"}</button><span className="row-actions"><button className="table-action" onClick={()=>edit(c)}>EDIT</button><button className="table-action danger" onClick={()=>remove(c.id)}>DELETE</button></span></div>)}</div>}</section></div>;
 }
