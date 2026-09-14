@@ -1,0 +1,6 @@
+/* LE SHE SAREE — editorial product-card interaction v2 */
+.product-card,.product-grid>a{will-change:transform}.product-grid>a{position:relative}.product-grid>a .product-meta{transition:transform .55s cubic-bezier(.16,1,.3,1),opacity .4s ease}.product-grid>a:hover .product-meta{transform:translateY(-4px)}
+.product-grid>a .product-image{isolation:isolate}.product-grid>a .product-image img{backface-visibility:hidden}.product-grid>a:hover .product-image{box-shadow:0 22px 55px rgba(23,20,17,.10)}
+.product-grid>a .product-image i{pointer-events:none}
+@media(max-width:700px){.product-grid>a:hover .product-meta{transform:none}.product-grid>a:active{transform:scale(.992)}}
+@media(prefers-reduced-motion:reduce){.product-grid>a .product-meta,.product-grid>a .product-image{transition:none!important}.product-grid>a:hover .product-meta{transform:none}}
