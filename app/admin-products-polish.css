@@ -1,0 +1,46 @@
+/* LE SHE SAREE — Admin Product Room polish */
+.admin-main{background:#171411;color:#eee7e1}
+.admin-dashboard{max-width:1440px;margin:0 auto}
+.admin-header{min-height:300px;align-items:flex-start;padding-bottom:30px}
+.admin-header h1{font-size:clamp(5rem,9vw,10rem);margin-top:52px}
+.admin-section{margin-top:55px}
+.admin-section-title{align-items:center;border-top:1px solid #4a4540;padding:14px 0;color:#aaa29a;letter-spacing:.08em}
+.admin-section-title button{margin-left:auto}
+.admin-form{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:22px 18px;padding:28px 0 36px}
+.admin-form>label{grid-column:span 4;display:flex;flex-direction:column;gap:8px;color:#aaa29a;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase}
+.admin-form>label:nth-child(1){grid-column:span 6}
+.admin-form>label:nth-child(2){grid-column:span 3}
+.admin-form>label:nth-child(3){grid-column:span 3}
+.admin-form>label:nth-child(4){grid-column:1 / -1}
+.admin-form>label:nth-child(7),.admin-form>label:nth-child(8){grid-column:span 6}
+.admin-form>label:nth-child(9),.admin-form>label:nth-child(10),.admin-form>label:nth-child(11),.admin-form>label:nth-child(12){grid-column:span 6}
+.admin-form input:not([type=checkbox]):not([type=file]),.admin-form textarea,.admin-form select{width:100%;border:1px solid #4a4540;border-radius:0;background:#211f1c;color:#eee7e1;padding:14px 15px;outline:none;min-height:48px;transition:border-color .25s,background .25s,box-shadow .25s}
+.admin-form textarea{min-height:110px;resize:vertical;line-height:1.4}
+.admin-form select{appearance:auto}
+.admin-form input:not([type=checkbox]):not([type=file])::placeholder,.admin-form textarea::placeholder{color:#716b65}
+.admin-form input:not([type=checkbox]):not([type=file]):focus,.admin-form textarea:focus,.admin-form select:focus{border-color:#eee7e1;background:#24211e;box-shadow:0 0 0 1px #eee7e1}
+.form-row{grid-column:span 6;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-row label{display:flex;flex-direction:column;gap:8px;color:#aaa29a;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase}
+.admin-form small{font-size:.58rem;color:#716b65;letter-spacing:.04em;text-transform:none}
+.admin-form input[type=file]{width:100%;border:1px dashed #5b554f;background:#211f1c;color:#aaa29a;padding:15px;cursor:pointer}
+.admin-form input[type=file]::file-selector-button{border:1px solid #eee7e1;background:#eee7e1;color:#171411;padding:9px 12px;margin-right:12px;cursor:pointer}
+.admin-image-preview{grid-column:span 4;border:1px solid #4a4540;background:#211f1c;padding:10px;display:flex;flex-direction:column;gap:10px}
+.admin-image-preview img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;background:#302c28}
+.check-row{grid-column:span 3!important;display:flex!important;flex-direction:row!important;align-items:center;gap:10px!important;color:#eee7e1!important;padding:14px 15px;border:1px solid #4a4540;background:#211f1c;text-transform:none!important;letter-spacing:0!important;font-size:.72rem!important}
+.check-row input{accent-color:#ff3b22;width:16px;height:16px}
+.form-actions{grid-column:1 / -1;display:flex;gap:10px;border-top:1px solid #4a4540;padding-top:22px}
+.admin-action{border:1px solid #4a4540;background:transparent;color:#eee7e1;padding:12px 16px;cursor:pointer;font-size:.65rem;letter-spacing:.08em;transition:transform .25s,background .25s,border-color .25s}
+.admin-action:hover{transform:translateY(-2px);border-color:#eee7e1;background:#24211e}
+.admin-submit{background:#eee7e1;color:#171411;border-color:#eee7e1;min-width:190px}
+.admin-submit:hover{background:#ff3b22;border-color:#ff3b22;color:#fff}
+.admin-empty{border:1px solid #4a4540;background:#211f1c;padding:18px;color:#aaa29a;font-size:.68rem;letter-spacing:.08em}
+.admin-table{border-top:1px solid #4a4540}
+.admin-row{display:grid;grid-template-columns:2fr 1fr 1fr .7fr 2.2fr;gap:18px;align-items:center;padding:16px 0;border-bottom:1px solid #37332f;font-size:.72rem}
+.admin-row-head{color:#716b65;font-size:.58rem;letter-spacing:.1em}
+.admin-row strong{font-size:.9rem;font-weight:500;color:#eee7e1}
+.row-actions{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+.table-action{border:1px solid #4a4540;background:transparent;color:#aaa29a;padding:8px 10px;cursor:pointer;font-size:.55rem;letter-spacing:.08em}
+.table-action:hover{color:#eee7e1;border-color:#eee7e1}
+.table-action.danger:hover{color:#ff6b58;border-color:#ff6b58}
+@media(max-width:900px){.admin-main{padding:32px 24px}.admin-form{grid-template-columns:1fr 1fr}.admin-form>label,.admin-form>label:nth-child(n),.admin-form>label:nth-child(1),.admin-form>label:nth-child(2),.admin-form>label:nth-child(3),.admin-form>label:nth-child(4),.admin-form>label:nth-child(7),.admin-form>label:nth-child(8),.admin-form>label:nth-child(9),.admin-form>label:nth-child(10),.admin-form>label:nth-child(11),.admin-form>label:nth-child(12){grid-column:span 1}.form-row{grid-column:span 2}.admin-image-preview{grid-column:span 1}.check-row{grid-column:span 1!important}.admin-row{grid-template-columns:1.7fr 1fr 1fr;gap:10px}.admin-row-head{display:none}.admin-row>span:nth-child(2){display:none}.row-actions{grid-column:1 / -1;justify-content:flex-start}}
+@media(max-width:600px){.admin-main{padding:24px 16px}.admin-header{min-height:240px}.admin-header h1{font-size:20vw;margin-top:38px}.admin-form{display:flex;flex-direction:column;gap:16px}.form-row{display:grid;grid-template-columns:1fr;gap:16px}.admin-image-preview{width:100%}.check-row{min-height:50px}.form-actions{flex-direction:column}.admin-submit{width:100%}.admin-row{display:flex;flex-direction:column;align-items:flex-start;gap:8px}.row-actions{width:100%}}
