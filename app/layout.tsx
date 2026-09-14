@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import "./storefront-polish.css";
 import "./visual-fixes.css";
+import "./visual-v2.css";
 import "./account/account-polish.css";
 import "./checkout/checkout-polish.css";
 
