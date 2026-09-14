@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
-import styles from "./product-card.module.css";
+import styles from "./product-card-reference.module.css";
 
 type ProductImage = { image_url: string; display_order: number; is_primary: boolean };
 type Product = { id: string; slug: string; name: string; price: number; image_url: string | null };
@@ -40,7 +40,7 @@ export default function ProductCard({ product, index }: { product: Product; inde
           <img className={`${styles.photo} ${styles.primary}`} src={primary} alt={product.name} />
           <img className={`${styles.photo} ${styles.hover}`} src={hover || primary} alt="" aria-hidden="true" />
         </> : <span className={styles.fallback}>{product.name.split(" ")[0].toUpperCase()}</span>}
-        <i>VIEW</i>
+        <i>VIEW MORE</i>
       </div>
       <div className={styles.meta}><span>{product.name}</span><span>₹ {Number(product.price).toLocaleString("en-IN")}</span></div>
     </a>
