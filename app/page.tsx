@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import MotionEnhancer from "./motion-enhancer";
+import ProductCard from "./product-card";
 
 type Product = { id: string; slug: string; name: string; price: number; image_url: string | null; category_id: string | null };
 type Category = { id: string; name: string; slug: string };
@@ -93,13 +94,7 @@ export default function Home() {
       </div>
 
       {loading ? <div className="product-grid product-grid-loading" aria-label="Loading products">{[1,2,3,4].map(item => <div className="product-skeleton" key={item}><div/><span/><span/></div>)}</div> : <div className="product-grid">
-        {catalogProducts.map((product, index) => <a className="product-card reveal-card" href={`/product/${product.slug}`} key={product.id} aria-label={`View ${product.name}`}>
-          <div className={`product-image parallax-image image-${String(index + 1).padStart(2, "0")} tone-${["rose", "stone", "plum", "sand"][index % 4]}`} style={product.image_url ? { backgroundImage: `url(${product.image_url})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}>
-            {!product.image_url && <span>{product.name.split(" ")[0].toUpperCase()}</span>}
-            <i>VIEW</i>
-          </div>
-          <div className="product-meta"><span>{product.name}</span><span>₹ {Number(product.price).toLocaleString("en-IN")}</span></div>
-        </a>)}
+        {catalogProducts.map((product, index) => <ProductCard key={product.id} product={product} index={index} />)}
       </div>}
       {!loading && catalogProducts.length === 0 && <div className="storefront-empty"><strong>NOTHING HERE YET.</strong><span>Try another collection.</span><button type="button" onClick={() => setActiveCategory("all")}>VIEW ALL →</button></div>}
     </section>
