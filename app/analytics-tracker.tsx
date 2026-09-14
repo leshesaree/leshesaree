@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { trackEvent } from "@/lib/analytics";
 
 function textOf(element: Element) {
@@ -8,26 +9,28 @@ function textOf(element: Element) {
 }
 
 export default function AnalyticsTracker() {
-  useEffect(() => {
-    const sendPageView = () => {
-      trackEvent("page_view", { page_title: document.title });
-      if (/^\/product\//.test(window.location.pathname)) {
-        trackEvent("view_item", { item_slug: window.location.pathname.split("/").filter(Boolean).pop() });
-      }
-      if (/^\/order\//.test(window.location.pathname)) {
-        const key = `leshe-purchase-tracked:${window.location.pathname}`;
-        if (!sessionStorage.getItem(key)) {
-          try {
-            const order = JSON.parse(localStorage.getItem("leshe-last-order") || "null");
-            if (order?.total != null) {
-              trackEvent("purchase", { value: Number(order.total), currency: "INR", items: Array.isArray(order.items) ? order.items.length : undefined });
-              sessionStorage.setItem(key, "1");
-            }
-          } catch {}
-        }
-      }
-    };
+  const pathname = usePathname();
 
+  useEffect(() => {
+    trackEvent("page_view", { page_title: document.title });
+    if (/^\/product\//.test(pathname)) {
+      trackEvent("view_item", { item_slug: pathname.split("/").filter(Boolean).pop() });
+    }
+    if (/^\/order\//.test(pathname)) {
+      const key = `leshe-purchase-tracked:${pathname}`;
+      if (!sessionStorage.getItem(key)) {
+        try {
+          const order = JSON.parse(localStorage.getItem("leshe-last-order") || "null");
+          if (order?.total != null) {
+            trackEvent("purchase", { value: Number(order.total), currency: "INR", items: Array.isArray(order.items) ? order.items.length : undefined });
+            sessionStorage.setItem(key, "1");
+          }
+        } catch {}
+      }
+    }
+  }, [pathname]);
+
+  useEffect(() => {
     const onClick = (event: MouseEvent) => {
       const target = event.target as Element | null;
       const element = target?.closest("a,button") as HTMLElement | null;
@@ -43,7 +46,6 @@ export default function AnalyticsTracker() {
       else if (href === "/bag" || href.includes("/checkout")) trackEvent("begin_checkout", { destination: href });
     };
 
-    sendPageView();
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
   }, []);
