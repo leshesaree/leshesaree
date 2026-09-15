@@ -1,0 +1,3 @@
+/* Restore normal document scrolling for the redesigned storefront. */
+html,body{min-height:100%;overflow-x:hidden;overflow-y:auto}
+.site-shell,.product-page,.bag-page,.checkout-shell,.admin-shell{overflow-x:hidden;overflow-y:visible;min-height:100vh}
