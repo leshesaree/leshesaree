@@ -26,6 +26,7 @@ import "./outfit-reference.css";
 import "./scroll-fix.css";
 import "./outfit-grid-fix.css";
 import "./modern-brand.css";
+import "./final-ui-polish.css";
 import GlobalMotion from "./global-motion";
 import MarketingBar from "./marketing-bar";
 import AnalyticsTracker from "./analytics-tracker";
