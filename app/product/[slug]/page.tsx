@@ -44,10 +44,16 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
           setProduct({ ...live, price: Number(live.price), label: live.name.split(" ")[0].toUpperCase(), tone: local.tone, desc: live.description || local.desc, sizes, stock: Number(live.stock || 0) });
           setSize(sizes[0] || "Free Size");
           const { data: images } = await supabase.from("product_images").select("id,image_url,alt_text,display_order,is_primary").eq("product_id", live.id).order("is_primary", { ascending: false }).order("display_order", { ascending: true });
-          if (active && images?.length) {
-            const ordered = images as GalleryImage[];
-            setGallery(ordered);
-            setSelectedImage((ordered.find((image) => image.is_primary) || ordered[0]).id);
+          if (active) {
+            const rows = (images || []) as GalleryImage[];
+            const seen = new Set<string>();
+            const merged: GalleryImage[] = [];
+            const addImage = (item: GalleryImage) => { if (!item.image_url || seen.has(item.image_url)) return; seen.add(item.image_url); merged.push(item); };
+            if (live.image_url) addImage({ id: `${live.id}-primary-url`, product_id: live.id, image_url: live.image_url, alt_text: live.name, display_order: -1, is_primary: true });
+            rows.forEach(addImage);
+            merged.sort((a,b) => Number(b.is_primary)-Number(a.is_primary) || a.display_order-b.display_order);
+            setGallery(merged);
+            if (merged.length) setSelectedImage(merged[0].id);
           }
           const latestWish = localStorage.getItem("leshe-wishlist");
           try { if (active) setSaved((JSON.parse(latestWish || "[]") as Wish[]).some(item => item.id === live.id || item.slug === live.slug)); } catch {}
