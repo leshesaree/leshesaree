@@ -22,6 +22,7 @@ import "./admin-products-polish.css";
 import "./account/account-polish.css";
 import "./checkout/checkout-polish.css";
 import "./wishlist/wishlist.css";
+import "./outfit-reference.css";
 import GlobalMotion from "./global-motion";
 import MarketingBar from "./marketing-bar";
 import AnalyticsTracker from "./analytics-tracker";
