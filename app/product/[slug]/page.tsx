@@ -22,6 +22,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   const [product, setProduct] = useState<DisplayProduct>(fallback.gulab);
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imageFailed, setImageFailed] = useState(false);
   const [size, setSize] = useState("Free Size");
   const [added, setAdded] = useState(false);
   const [bag, setBag] = useState(0);
@@ -66,6 +67,8 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   const hasGallery = gallery.length > 0;
   const imageKey = useMemo(() => `${product.id}-${selectedImage || "fallback"}`, [product.id, selectedImage]);
 
+  useEffect(() => { setImageFailed(false); }, [imageKey, currentImage]);
+
   const selectRelative = (delta: number) => { if (!gallery.length) return; const next = (selectedIndex + delta + gallery.length) % gallery.length; setSelectedImage(gallery[next].id); };
 
   const toggleWishlist = () => {
@@ -91,7 +94,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
       <header className="topbar product-top"><a className="wordmark" href="/">LE SHE<br /><span>SAREE</span></a><nav><a href="/">Shop</a><a href="/account">Account</a><Link href="/wishlist" className="wishlist-nav">Wishlist</Link><a href="/bag">Bag ({bag})</a></nav><span className="top-meta">PRODUCT / {product.slug.toUpperCase()}</span></header>
       <a className="back-link" href="/">← Back to collection</a>
       <section className="product-detail">
-        <div className="product-visual"><div className="product-gallery">{hasGallery && <div className="product-thumbs" aria-label="Product image thumbnails">{gallery.map((item, index) => <button type="button" key={item.id} className={selectedImage === item.id ? "selected" : ""} onClick={() => setSelectedImage(item.id)} aria-label={`View image ${index + 1}`}><img src={item.image_url} alt={item.alt_text || product.name} /></button>)}</div>}<div className="product-stage"><span className="product-gallery-count">{galleryLabel}</span>{currentImage ? <img key={imageKey} src={currentImage} alt={gallery[selectedIndex]?.alt_text || product.name} /> : <div className="product-stage-empty"><span>{product.label}</span></div>}{gallery.length > 1 && <><button className="gallery-arrow prev" type="button" onClick={() => selectRelative(-1)} aria-label="Previous image">←</button><button className="gallery-arrow next" type="button" onClick={() => selectRelative(1)} aria-label="Next image">→</button></>}</div></div></div>
+        <div className="product-visual"><div className="product-gallery">{hasGallery && <div className="product-thumbs" aria-label="Product image thumbnails">{gallery.map((item, index) => <button type="button" key={item.id} className={selectedImage === item.id ? "selected" : ""} onClick={() => setSelectedImage(item.id)} aria-label={`View image ${index + 1}`}><img src={item.image_url} alt={item.alt_text || product.name} /></button>)}</div>}<div className="product-stage"><span className="product-gallery-count">{galleryLabel}</span>{currentImage && !imageFailed ? <img key={imageKey} src={currentImage} alt={gallery[selectedIndex]?.alt_text || product.name} onError={() => setImageFailed(true)} /> : <div className="product-stage-empty"><span>{product.label}</span><small>IMAGE UNAVAILABLE</small></div>}{gallery.length > 1 && <><button className="gallery-arrow prev" type="button" onClick={() => selectRelative(-1)} aria-label="Previous image">←</button><button className="gallery-arrow next" type="button" onClick={() => selectRelative(1)} aria-label="Next image">→</button></>}</div></div></div>
         <div className="product-info"><p className="eyebrow">HANDCRAFTED INDIA / 2026</p><div className="product-title-row"><h1>{product.name}</h1><button type="button" className={`wishlist-heart ${saved ? "saved" : ""}`} onClick={toggleWishlist} aria-label={saved ? "Remove from wishlist" : "Add to wishlist"} aria-pressed={saved}>{saved ? "♥" : "♡"}</button></div><div className="price">₹ {product.price.toLocaleString("en-IN")}</div><p className="description">{product.desc}</p>{product.material && <p className="product-material"><b>MATERIAL</b> {product.material}</p>}<div className="option-label">SIZE <span>{size}</span></div><div className="sizes">{product.sizes.map((item) => <button type="button" className={size === item ? "selected" : ""} onClick={() => setSize(item)} key={item}>{item}</button>)}</div><button className={`add-button ${added ? "added" : ""}`} disabled={loading || product.stock <= 0} onClick={add}>{loading ? "LOADING…" : product.stock <= 0 ? "OUT OF STOCK" : added ? "ADDED TO BAG ✓" : "ADD TO BAG"}<span>↗</span></button><div className="details"><p>{product.care_instructions || "Handcrafted textile · Gentle care recommended"}</p><p>{product.stock > 0 ? `${product.stock} available` : "Currently unavailable"}</p><p>Shipping calculated at checkout</p></div></div>
       </section>
       <ProductReviews productId={product.id} />
