@@ -25,6 +25,7 @@ import "./wishlist/wishlist.css";
 import "./outfit-reference.css";
 import "./scroll-fix.css";
 import "./outfit-grid-fix.css";
+import "./modern-brand.css";
 import GlobalMotion from "./global-motion";
 import MarketingBar from "./marketing-bar";
 import AnalyticsTracker from "./analytics-tracker";
