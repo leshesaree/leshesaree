@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
+import Link from "next/link";
 
 type CartItem={product_id:string;slug:string;name:string;price:number;image_url:string|null;quantity:number;size:string};
 type Campaign={name:string;code:string|null;discount_percent:number;starts_at:string|null;ends_at:string|null;is_active:boolean};
@@ -17,6 +18,8 @@ async function loadCashfree(){
  return window.Cashfree;
 }
 
+const money=(value:number)=>`₹ ${value.toLocaleString("en-IN")}`;
+
 export default function CheckoutPage(){
  const [items,setItems]=useState<CartItem[]>([]);const [campaigns,setCampaigns]=useState<Campaign[]>([]);const [coupon,setCoupon]=useState("");const [applied,setApplied]=useState<Campaign|null>(null);const [couponError,setCouponError]=useState("");const [error,setError]=useState("");const [busy,setBusy]=useState(false);
  useEffect(()=>{try{const raw=localStorage.getItem("leshe-bag-items");if(raw)setItems(JSON.parse(raw));}catch{} const supabase=getSupabaseBrowserClient();if(supabase)supabase.from("marketing_campaigns").select("name,code,discount_percent,starts_at,ends_at,is_active").eq("is_active",true).then(({data})=>setCampaigns((data||[]) as Campaign[]));},[]);
@@ -29,14 +32,33 @@ export default function CheckoutPage(){
  const receipt=data as {id:string;receipt_token:string};if(!receipt?.id||!receipt?.receipt_token){setError("The order was created but the secure receipt could not be prepared.");setBusy(false);return;}
  const id=receipt.id;try{localStorage.setItem("leshe-last-order",JSON.stringify({id,receipt_token:receipt.receipt_token,customer_name:customerName,items:items.map(item=>({id:item.product_id,product_name:item.name,quantity:item.quantity,unit_price:item.price,size:item.size||null})),subtotal,shipping_fee:0,discount_code:applied?.code||null,discount_amount:discount,total,created_at:new Date().toISOString(),status:"pending",payment_status:"pending"}));}catch{}
  localStorage.removeItem("leshe-bag-items");localStorage.setItem("leshe-bag-count","0");
- try{
-   const {data:payment,error:paymentError}=await supabase.functions.invoke("cashfree-create-order",{body:{action:"create",order_id:id,receipt_token:receipt.receipt_token}});
-   if(paymentError||!payment?.payment_session_id)throw new Error(paymentError?.message||payment?.error||"Online payment is not available right now");
-   const Cashfree=await loadCashfree();const mode=(process.env.NEXT_PUBLIC_CASHFREE_MODE||"sandbox") as "sandbox"|"production";const cashfree=Cashfree({mode});await cashfree.checkout({paymentSessionId:payment.payment_session_id,redirectTarget:"_self"});return;
- }catch(paymentError){
-   const paymentMessage=paymentError instanceof Error?paymentError.message:"Payment could not be started";
-   window.location.href=`/order/${id}?token=${encodeURIComponent(receipt.receipt_token)}&payment=unavailable&message=${encodeURIComponent(paymentMessage)}`;return;
- }
- }
- return <main className="checkout-shell"><header className="checkout-header"><a className="wordmark" href="/">LE SHE<br/><span>SAREE</span></a><a href="/bag">Bag ({items.reduce((s,i)=>s+i.quantity,0)})</a></header><section className="checkout-grid"><div className="checkout-intro"><span>03 — CHECKOUT</span><h1>MAKE IT<br/><i>YOURS.</i></h1><p>Complete your details and we'll prepare your order with care.</p><div className="checkout-total"><span>SUBTOTAL</span><strong>₹ {subtotal.toLocaleString("en-IN")}</strong>{applied&&<><span>PROMO / {applied.code}</span><strong>− ₹ {discount.toLocaleString("en-IN")}</strong></>}<span>ORDER TOTAL</span><strong>₹ {total.toLocaleString("en-IN")}</strong></div></div><form className="checkout-form" onSubmit={submit}><div className="coupon-row"><input value={coupon} onChange={e=>setCoupon(e.target.value)} placeholder="PROMOTION CODE"/><button type="button" onClick={applyCoupon}>APPLY</button></div>{couponError&&<p className="form-error">{couponError}</p>}{applied&&<p className="form-success">{applied.code} applied — {applied.discount_percent}% off.</p>}<label>Full name<input required name="name" placeholder="Your name" autoComplete="name"/></label><label>Email<input required type="email" name="email" placeholder="you@example.com" autoComplete="email"/></label><label>Phone<input required name="phone" placeholder="+91" autoComplete="tel"/></label><label>Address<textarea required name="address" placeholder="Delivery address" rows={3} autoComplete="street-address"/></label><div className="form-row"><label>City<input required name="city" placeholder="City" autoComplete="address-level2"/></label><label>PIN code<input required name="pin" inputMode="numeric" pattern="[0-9]{4,10}" placeholder="000000" autoComplete="postal-code"/></label></div>{error&&<p className="form-error">{error}</p>}<button className="checkout-button" type="submit" disabled={busy||!items.length}><span>{busy?"SECURING ORDER…":"PLACE ORDER & PAY"}</span><b>→</b></button><p className="checkout-payment-note">Secure payment powered by Cashfree. Your order is reserved before payment so you can safely retry if payment is interrupted.</p></form></section></main>
+ try{const {data:payment,error:paymentError}=await supabase.functions.invoke("cashfree-create-order",{body:{action:"create",order_id:id,receipt_token:receipt.receipt_token}});if(paymentError||!payment?.payment_session_id)throw new Error(paymentError?.message||payment?.error||"Online payment is not available right now");const Cashfree=await loadCashfree();const mode=(process.env.NEXT_PUBLIC_CASHFREE_MODE||"sandbox") as "sandbox"|"production";const cashfree=Cashfree({mode});await cashfree.checkout({paymentSessionId:payment.payment_session_id,redirectTarget:"_self"});return;}catch(paymentError){const paymentMessage=paymentError instanceof Error?paymentError.message:"Payment could not be started";window.location.href=`/order/${id}?token=${encodeURIComponent(receipt.receipt_token)}&payment=unavailable&message=${encodeURIComponent(paymentMessage)}`;return;}}
+ return <main className="checkout-shell">
+  <header className="checkout-header"><a className="wordmark" href="/">LE SHE<br/><span>SAREE</span></a><Link href="/bag">Bag ({items.reduce((s,i)=>s+i.quantity,0)})</Link></header>
+  <section className="checkout-grid">
+   <div className="checkout-intro">
+    <div className="checkout-progress"><span className="step muted">01 <span>Bag</span></span><span className="line"/><span className="step muted">02 <span>Details</span></span><span className="line"/><span className="step"><span className="dot"/>03 <span>Checkout</span></span></div>
+    <p className="checkout-side-title">A considered checkout</p>
+    <h1>MAKE IT<br/><i>YOURS.</i></h1>
+    <p>Complete your delivery details and we’ll prepare your order with the same care as the piece itself.</p>
+    <div className="checkout-mini-trust"><span><b>✓</b> Secure payment</span><span><b>✓</b> Order reservation</span><span><b>✓</b> Support when you need it</span></div>
+    <div className="checkout-total"><span>SUBTOTAL</span><strong>{money(subtotal)}</strong>{applied&&<><span>PROMO / {applied.code}</span><strong>− {money(discount)}</strong></>}<span>ORDER TOTAL</span><strong>{money(total)}</strong></div>
+   </div>
+   <form className="checkout-form" onSubmit={submit}>
+    <div className="coupon-row"><input value={coupon} onChange={e=>setCoupon(e.target.value)} placeholder="PROMOTION CODE"/><button type="button" onClick={applyCoupon}>APPLY</button></div>
+    {couponError&&<p className="form-error">{couponError}</p>}{applied&&<p className="form-success">{applied.code} applied — {applied.discount_percent}% off.</p>}
+    <div className="checkout-section-heading"><span>01</span><div><strong>Contact information</strong><small>How can we reach you about this order?</small></div></div>
+    <label>Full name<input required name="name" placeholder="Your name" autoComplete="name"/></label>
+    <div className="form-row"><label>Email<input required type="email" name="email" placeholder="you@example.com" autoComplete="email"/></label><label>Phone<input required name="phone" placeholder="+91" autoComplete="tel"/></label></div>
+    <div className="checkout-section-heading"><span>02</span><div><strong>Delivery address</strong><small>Where should we deliver your saree?</small></div></div>
+    <label>Address<textarea required name="address" placeholder="Delivery address" rows={3} autoComplete="street-address"/></label>
+    <div className="form-row"><label>City<input required name="city" placeholder="City" autoComplete="address-level2"/></label><label>PIN code<input required name="pin" inputMode="numeric" pattern="[0-9]{4,10}" placeholder="000000" autoComplete="postal-code"/></label></div>
+    {error&&<p className="form-error">{error}</p>}
+    <div className="checkout-order-summary"><h3>Order summary</h3><div className="checkout-summary-list">{items.map(item=><div className="checkout-summary-item" key={`${item.product_id}-${item.size}`}><img src={item.image_url||"/placeholder.svg"} alt={item.name}/><div className="copy"><strong>{item.name}</strong><span>Size: {item.size||"Free Size"} · Qty {item.quantity}</span></div><span className="amount">{money(item.price*item.quantity)}</span></div>)}</div><div className="checkout-summary-totals"><span>Items</span><strong>{items.reduce((s,i)=>s+i.quantity,0)}</strong><span>Subtotal</span><strong>{money(subtotal)}</strong>{applied&&<><span>Discount</span><strong>− {money(discount)}</strong></>}<span className="total">Total</span><strong className="total">{money(total)}</strong></div></div>
+    <div className="checkout-secure-strip"><div><strong>🔒 Secure</strong>encrypted payment</div><div><strong>✓ Reserved</strong>stock held safely</div><div><strong>✦ Support</strong>order assistance</div></div>
+    <button className="checkout-button" type="submit" disabled={busy||!items.length}><span>{busy?"SECURING ORDER…":"PLACE ORDER & PAY"}</span><b>→</b></button>
+    <p className="checkout-payment-note">Secure payment powered by Cashfree. Your order is reserved before payment so you can safely retry if payment is interrupted.</p>
+   </form>
+  </section>
+ </main>
 }
