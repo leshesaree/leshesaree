@@ -5,6 +5,7 @@ import AdminGuard from "./AdminGuard";
 import {getSupabaseBrowserClient} from "@/lib/supabase-browser";
 import "./admin-final-polish.css";
 import "./admin-storefront.css";
+import "./admin-ui-v2.css";
 
 const nav=[["Dashboard","/admin"],["Products","/admin/products"],["Categories","/admin/categories"],["Inventory","/admin/inventory"],["Orders","/admin/orders"],["Customers","/admin/customers"],["Marketing","/admin/marketing"],["Reviews","/admin/reviews"],["Payments","/admin/payments"],["Shipping","/admin/shipping"],["SEO / Analytics","/admin/analytics"],["Website / CMS","/admin/cms"],["Settings","/admin/settings"]];
 
