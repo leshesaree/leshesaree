@@ -8,6 +8,7 @@ import "./admin-storefront.css";
 import "./admin-ui-v2.css";
 import "./admin-readable.css";
 import "./admin-final-readable.css";
+import "./admin-command-center.css";
 
 const nav=[["Dashboard","/admin"],["Products","/admin/products"],["Categories","/admin/categories"],["Inventory","/admin/inventory"],["Orders","/admin/orders"],["Customers","/admin/customers"],["Marketing","/admin/marketing"],["Reviews","/admin/reviews"],["Payments","/admin/payments"],["Shipping","/admin/shipping"],["SEO / Analytics","/admin/analytics"],["Website / CMS","/admin/cms"],["Settings","/admin/settings"]];
 
