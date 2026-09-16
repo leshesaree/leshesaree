@@ -33,7 +33,7 @@ import "./leshe-home.css";
 import "./product/product-details-storefront.css";
 import "./product/product-layout-fix.css";
 import "./checkout/checkout-modern.css";
-import "./checkout/checkout-international.css";
+import "./checkout/checkout-final-polish.css";
 import GlobalMotion from "./global-motion";
 import MarketingBar from "./marketing-bar";
 import AnalyticsTracker from "./analytics-tracker";
