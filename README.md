@@ -25,3 +25,7 @@ npm run typecheck
 ## Environment
 
 Use the public Supabase URL and publishable key as `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Never expose a Supabase service-role or secret key in browser code.
+
+## Production design
+
+The `main` branch is the production source of truth. The current storefront uses the new LE SHE SAREE editorial/outfit-inspired design while preserving the existing commerce, checkout, payment, account, and admin functionality.
