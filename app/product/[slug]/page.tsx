@@ -20,47 +20,27 @@ const fallback: Record<string, DisplayProduct> = {
 
 const displayImageUrl = (url: string | null) => {
   if (!url) return null;
-  try {
-    const parsed = new URL(url);
-    if (parsed.protocol === "https:" && (parsed.hostname === "i.ibb.co" || parsed.hostname === "ibb.co")) return `/api/image-proxy?url=${encodeURIComponent(url)}`;
-  } catch {}
+  try { const parsed = new URL(url); if (parsed.protocol === "https:" && (parsed.hostname === "i.ibb.co" || parsed.hostname === "ibb.co")) return `/api/image-proxy?url=${encodeURIComponent(url)}`; } catch {}
   return url;
 };
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const [product, setProduct] = useState<DisplayProduct>(fallback.gulab);
-  const [gallery, setGallery] = useState<GalleryImage[]>([]);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [imageFailed, setImageFailed] = useState(false);
-  const [size, setSize] = useState("Free Size");
-  const [added, setAdded] = useState(false);
-  const [bag, setBag] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [saved, setSaved] = useState(false);
+  const [product, setProduct] = useState<DisplayProduct>(fallback.gulab); const [gallery, setGallery] = useState<GalleryImage[]>([]); const [selectedImage, setSelectedImage] = useState<string | null>(null); const [imageFailed, setImageFailed] = useState(false); const [size, setSize] = useState("Free Size"); const [added, setAdded] = useState(false); const [bag, setBag] = useState(0); const [loading, setLoading] = useState(true); const [saved, setSaved] = useState(false); const [buying, setBuying] = useState(false);
 
   useEffect(() => {
     let active = true;
     params.then(async ({ slug }) => {
-      const local = fallback[slug] || fallback.gulab;
-      if (active) setProduct(local);
-      const rawWish = localStorage.getItem("leshe-wishlist");
-      if (active) { try { setSaved((JSON.parse(rawWish || "[]") as Wish[]).some(item => item.id === local.id || item.slug === local.slug)); } catch { setSaved(false); } }
+      const local = fallback[slug] || fallback.gulab; if (active) setProduct(local);
+      try { const wish = JSON.parse(localStorage.getItem("leshe-wishlist") || "[]") as Wish[]; if (active) setSaved(wish.some(item => item.id === local.id || item.slug === local.slug)); } catch {}
       const supabase = getSupabaseBrowserClient();
       if (supabase) {
         const { data } = await supabase.from("products").select("id,name,price,description,sizes,stock,image_url,is_active,slug,material,care_instructions,seo_title,seo_description").eq("slug", slug).eq("is_active", true).maybeSingle();
         if (data && active) {
-          const live = data as Product;
-          const sizes = live.sizes?.length ? live.sizes : local.sizes;
-          setProduct({ ...live, price: Number(live.price), label: live.name.split(" ")[0].toUpperCase(), tone: local.tone, desc: live.description || local.desc, sizes, stock: Number(live.stock || 0) });
-          setSize(sizes[0] || "Free Size");
+          const live = data as Product; const sizes = live.sizes?.length ? live.sizes : local.sizes;
+          setProduct({ ...live, price: Number(live.price), label: live.name.split(" ")[0].toUpperCase(), tone: local.tone, desc: live.description || local.desc, sizes, stock: Number(live.stock || 0) }); setSize(sizes[0] || "Free Size");
           const { data: images } = await supabase.from("product_images").select("id,image_url,alt_text,display_order,is_primary").eq("product_id", live.id).order("is_primary", { ascending: false }).order("display_order", { ascending: true });
-          if (active && images?.length) {
-            const ordered = images as GalleryImage[];
-            setGallery(ordered);
-            setSelectedImage((ordered.find((image) => image.is_primary) || ordered[0]).id);
-          }
-          const latestWish = localStorage.getItem("leshe-wishlist");
-          try { if (active) setSaved((JSON.parse(latestWish || "[]") as Wish[]).some(item => item.id === live.id || item.slug === live.slug)); } catch {}
+          if (active && images?.length) { const ordered = images as GalleryImage[]; setGallery(ordered); setSelectedImage((ordered.find(image => image.is_primary) || ordered[0]).id); }
+          try { const wish = JSON.parse(localStorage.getItem("leshe-wishlist") || "[]") as Wish[]; if (active) setSaved(wish.some(item => item.id === live.id || item.slug === live.slug)); } catch {}
         }
       }
       if (active) { setBag(Number(localStorage.getItem("leshe-bag-count") || 0)); setLoading(false); }
@@ -70,44 +50,19 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
   useEffect(() => { const sync = () => { try { const list = JSON.parse(localStorage.getItem("leshe-wishlist") || "[]") as Wish[]; setSaved(list.some(item => item.id === product.id || item.slug === product.slug)); } catch {} }; window.addEventListener("leshe-wishlist-updated", sync); return () => window.removeEventListener("leshe-wishlist-updated", sync); }, [product.id, product.slug]);
 
-  const selectedIndex = Math.max(0, gallery.findIndex((item) => item.id === selectedImage));
-  const currentImage = gallery[selectedIndex]?.image_url || product.image_url;
-  const currentDisplayImage = displayImageUrl(currentImage);
-  const galleryLabel = gallery.length ? `${String(selectedIndex + 1).padStart(2, "0")} / ${String(gallery.length).padStart(2, "0")}` : "01 / 01";
-  const hasGallery = gallery.length > 0;
-  const imageKey = useMemo(() => `${product.id}-${selectedImage || "fallback"}`, [product.id, selectedImage]);
-
+  const selectedIndex = Math.max(0, gallery.findIndex(item => item.id === selectedImage)); const currentImage = gallery[selectedIndex]?.image_url || product.image_url; const currentDisplayImage = displayImageUrl(currentImage); const galleryLabel = gallery.length ? `${String(selectedIndex + 1).padStart(2, "0")} / ${String(gallery.length).padStart(2, "0")}` : "01 / 01"; const hasGallery = gallery.length > 0; const imageKey = useMemo(() => `${product.id}-${selectedImage || "fallback"}`, [product.id, selectedImage]);
   useEffect(() => { setImageFailed(false); }, [imageKey, currentImage]);
-
   const selectRelative = (delta: number) => { if (!gallery.length) return; const next = (selectedIndex + delta + gallery.length) % gallery.length; setSelectedImage(gallery[next].id); };
 
-  const toggleWishlist = () => {
-    let list: Wish[] = [];
-    try { list = JSON.parse(localStorage.getItem("leshe-wishlist") || "[]") as Wish[]; } catch {}
-    const exists = list.some(item => item.id === product.id || item.slug === product.slug);
-    const next = exists ? list.filter(item => item.id !== product.id && item.slug !== product.slug) : [...list, { id: product.id, slug: product.slug, name: product.name, price: product.price, image_url: currentDisplayImage }];
-    localStorage.setItem("leshe-wishlist", JSON.stringify(next));
-    setSaved(!exists);
-    window.dispatchEvent(new Event("leshe-wishlist-updated"));
-  };
+  const toggleWishlist = () => { let list: Wish[] = []; try { list = JSON.parse(localStorage.getItem("leshe-wishlist") || "[]") as Wish[]; } catch {} const exists = list.some(item => item.id === product.id || item.slug === product.slug); const next = exists ? list.filter(item => item.id !== product.id && item.slug !== product.slug) : [...list, { id: product.id, slug: product.slug, name: product.name, price: product.price, image_url: currentDisplayImage }]; localStorage.setItem("leshe-wishlist", JSON.stringify(next)); setSaved(!exists); window.dispatchEvent(new Event("leshe-wishlist-updated")); };
 
-  const add = () => {
-    if (product.stock <= 0) return;
-    const raw = localStorage.getItem("leshe-bag-items"); const items: CartItem[] = raw ? JSON.parse(raw) : [];
-    const index = items.findIndex((item) => item.product_id === product.id && item.size === size);
-    if (index >= 0) items[index].quantity = Math.min(items[index].quantity + 1, product.stock); else items.push({ product_id: product.id, slug: product.slug, name: product.name, price: product.price, image_url: currentDisplayImage, quantity: 1, size });
-    const total = items.reduce((sum, item) => sum + item.quantity, 0); localStorage.setItem("leshe-bag-items", JSON.stringify(items)); localStorage.setItem("leshe-bag-count", String(total)); window.dispatchEvent(new Event("storage")); setBag(total); setAdded(true); setTimeout(() => setAdded(false), 900);
-  };
+  const add = () => { if (product.stock <= 0) return; const raw = localStorage.getItem("leshe-bag-items"); const items: CartItem[] = raw ? JSON.parse(raw) : []; const index = items.findIndex(item => item.product_id === product.id && item.size === size); if (index >= 0) items[index].quantity = Math.min(items[index].quantity + 1, product.stock); else items.push({ product_id: product.id, slug: product.slug, name: product.name, price: product.price, image_url: currentDisplayImage, quantity: 1, size }); const total = items.reduce((sum, item) => sum + item.quantity, 0); localStorage.setItem("leshe-bag-items", JSON.stringify(items)); localStorage.setItem("leshe-bag-count", String(total)); window.dispatchEvent(new Event("leshe-bag-updated")); window.dispatchEvent(new Event("storage")); setBag(total); setAdded(true); setTimeout(() => setAdded(false), 1000); };
+  const buyNow = () => { if (product.stock <= 0 || buying) return; setBuying(true); const item: CartItem = { product_id: product.id, slug: product.slug, name: product.name, price: product.price, image_url: currentDisplayImage, quantity: 1, size }; localStorage.setItem("leshe-bag-items", JSON.stringify([item])); localStorage.setItem("leshe-bag-count", "1"); window.dispatchEvent(new Event("leshe-bag-updated")); window.location.href = "/checkout"; };
 
-  return (
-    <main className={`product-page tone-${product.tone}`}>
-      <header className="topbar product-top"><a className="wordmark" href="/">LE SHE<br /><span>SAREE</span></a><nav><a href="/">Shop</a><a href="/account">Account</a><Link href="/wishlist" className="wishlist-nav">Wishlist</Link><a href="/bag">Bag ({bag})</a></nav><span className="top-meta">PRODUCT / {product.slug.toUpperCase()}</span></header>
-      <a className="back-link" href="/">← Back to collection</a>
-      <section className="product-detail">
-        <div className="product-visual"><div className="product-gallery">{hasGallery && <div className="product-thumbs" aria-label="Product image thumbnails">{gallery.map((item, index) => <button type="button" key={item.id} className={selectedImage === item.id ? "selected" : ""} onClick={() => setSelectedImage(item.id)} aria-label={`View image ${index + 1}`}><img src={displayImageUrl(item.image_url) || item.image_url} alt={item.alt_text || product.name} onError={(e) => { e.currentTarget.style.opacity = "0"; }} /></button>)}</div>}<div className="product-stage"><span className="product-gallery-count">{galleryLabel}</span>{currentDisplayImage && !imageFailed ? <img key={imageKey} src={currentDisplayImage} alt={gallery[selectedIndex]?.alt_text || product.name} onError={() => setImageFailed(true)} /> : <div className="product-stage-empty"><span>{product.label}</span><small>IMAGE UNAVAILABLE</small></div>}{gallery.length > 1 && <><button className="gallery-arrow prev" type="button" onClick={() => selectRelative(-1)} aria-label="Previous image">←</button><button className="gallery-arrow next" type="button" onClick={() => selectRelative(1)} aria-label="Next image">→</button></>}</div></div></div>
-        <div className="product-info"><p className="eyebrow">HANDCRAFTED INDIA / 2026</p><div className="product-title-row"><h1>{product.name}</h1><button type="button" className={`wishlist-heart ${saved ? "saved" : ""}`} onClick={toggleWishlist} aria-label={saved ? "Remove from wishlist" : "Add to wishlist"} aria-pressed={saved}>{saved ? "♥" : "♡"}</button></div><div className="price">₹ {product.price.toLocaleString("en-IN")}</div><p className="description">{product.desc}</p>{product.material && <p className="product-material"><b>MATERIAL</b> {product.material}</p>}<div className="option-label">SIZE <span>{size}</span></div><div className="sizes">{product.sizes.map((item) => <button type="button" className={size === item ? "selected" : ""} onClick={() => setSize(item)} key={item}>{item}</button>)}</div><button className={`add-button ${added ? "added" : ""}`} disabled={loading || product.stock <= 0} onClick={add}>{loading ? "LOADING…" : product.stock <= 0 ? "OUT OF STOCK" : added ? "ADDED TO BAG ✓" : "ADD TO BAG"}<span>↗</span></button><div className="details"><p>{product.care_instructions || "Handcrafted textile · Gentle care recommended"}</p><p>{product.stock > 0 ? `${product.stock} available` : "Currently unavailable"}</p><p>Shipping calculated at checkout</p></div></div>
-      </section>
-      <ProductReviews productId={product.id} />
-    </main>
-  );
+  return <main className={`product-page tone-${product.tone}`}>
+    <header className="topbar product-top"><a className="wordmark" href="/">LE SHE<br /><span>SAREE</span></a><nav><a href="/">Shop</a><a href="/account">Account</a><Link href="/wishlist" className="wishlist-nav">Wishlist</Link><a href="/bag">Bag ({bag})</a></nav><span className="top-meta">PRODUCT / {product.slug.toUpperCase()}</span></header>
+    <a className="back-link" href="/">← Back to collection</a>
+    <section className="product-detail"><div className="product-visual"><div className="product-gallery">{hasGallery && <div className="product-thumbs" aria-label="Product image thumbnails">{gallery.map((item, index) => <button type="button" key={item.id} className={selectedImage === item.id ? "selected" : ""} onClick={() => setSelectedImage(item.id)} aria-label={`View image ${index + 1}`}><img src={displayImageUrl(item.image_url) || item.image_url} alt={item.alt_text || product.name} onError={e => { e.currentTarget.style.opacity = "0"; }} /></button>)}</div>}<div className="product-stage"><span className="product-gallery-count">{galleryLabel}</span>{currentDisplayImage && !imageFailed ? <img key={imageKey} src={currentDisplayImage} alt={gallery[selectedIndex]?.alt_text || product.name} onError={() => setImageFailed(true)} /> : <div className="product-stage-empty"><span>{product.label}</span><small>IMAGE UNAVAILABLE</small></div>}{gallery.length > 1 && <><button className="gallery-arrow prev" type="button" onClick={() => selectRelative(-1)} aria-label="Previous image">←</button><button className="gallery-arrow next" type="button" onClick={() => selectRelative(1)} aria-label="Next image">→</button></>}</div></div></div><div className="product-info"><p className="eyebrow">HANDCRAFTED INDIA / 2026</p><div className="product-title-row"><h1>{product.name}</h1><button type="button" className={`wishlist-heart ${saved ? "saved" : ""}`} onClick={toggleWishlist} aria-label={saved ? "Remove from wishlist" : "Add to wishlist"} aria-pressed={saved}>{saved ? "♥" : "♡"}</button></div><div className="price">₹ {product.price.toLocaleString("en-IN")}</div><p className="description">{product.desc}</p>{product.material && <p className="product-material"><b>MATERIAL</b> {product.material}</p>}<div className="option-label">SIZE <span>{size}</span></div><div className="sizes">{product.sizes.map(item => <button type="button" className={size === item ? "selected" : ""} onClick={() => setSize(item)} key={item}>{item}</button>)}</div><div className="purchase-actions"><button className={`add-button ${added ? "added" : ""}`} disabled={loading || product.stock <= 0} onClick={add}>{loading ? "LOADING…" : product.stock <= 0 ? "OUT OF STOCK" : added ? "ADDED TO BAG ✓" : "ADD TO CART"}<span>↗</span></button><button className="buy-now-button" disabled={loading || product.stock <= 0 || buying} onClick={buyNow}>{buying ? "OPENING CHECKOUT…" : product.stock <= 0 ? "OUT OF STOCK" : "BUY NOW"}<span>→</span></button></div><div className="details"><p>{product.care_instructions || "Handcrafted textile · Gentle care recommended"}</p><p>{product.stock > 0 ? `${product.stock} available` : "Currently unavailable"}</p><p>Shipping calculated at checkout</p></div></div></section>
+    <ProductReviews productId={product.id} />
+  </main>;
 }
