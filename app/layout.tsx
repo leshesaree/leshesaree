@@ -35,6 +35,7 @@ import "./product/product-layout-fix.css";
 import "./checkout/checkout-modern.css";
 import "./checkout/checkout-final-polish.css";
 import "./checkout/checkout-elite.css";
+import "./checkout/checkout-3d-polish.css";
 import GlobalMotion from "./global-motion";
 import MarketingBar from "./marketing-bar";
 import AnalyticsTracker from "./analytics-tracker";
