@@ -1,0 +1,14 @@
+/* LE SHE SAREE — final product gallery/layout hardening */
+.product-page .product-top{color:#231c19!important;background:rgba(255,253,251,.97)!important;mix-blend-mode:normal!important}
+.product-page .product-top nav,.product-page .product-top nav a{color:#3f3530!important;opacity:1!important;visibility:visible!important}
+.product-page .product-top nav a:hover{color:#a33f4e!important}
+.product-page .product-visual{display:block!important;width:100%!important;min-width:0!important;max-width:none!important;align-self:stretch!important}
+.product-page .product-gallery{display:grid!important;width:100%!important;min-width:0!important;max-width:none!important;grid-template-columns:84px minmax(0,1fr)!important;gap:14px!important;align-items:start!important}
+.product-page .product-thumbs{width:84px!important;min-width:0!important;flex:0 0 84px!important}
+.product-page .product-stage{display:block!important;width:100%!important;min-width:0!important;max-width:none!important;aspect-ratio:4/5!important;overflow:hidden!important}
+.product-page .product-stage img{width:100%!important;height:100%!important;min-width:0!important;max-width:none!important;display:block!important;object-fit:cover!important;object-position:center top!important}
+.product-page .product-gallery-count{z-index:8!important}
+.product-page .gallery-arrow{z-index:9!important}
+.product-page .product-detail{min-width:0!important}
+.product-page .product-info{min-width:0!important;max-width:none!important}
+@media(max-width:900px){.product-page .product-gallery{display:flex!important;flex-direction:column!important;width:100%!important}.product-page .product-stage{width:100%!important}.product-page .product-thumbs{width:100%!important;min-width:0!important;flex:0 0 auto!important}}
