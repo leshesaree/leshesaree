@@ -1,0 +1,44 @@
+/* LE SHE SAREE — luxury storefront layer */
+:root{--ls-ivory:#f8f4ee;--ls-paper:#fbf8f3;--ls-ink:#1d1a17;--ls-muted:#756d64;--ls-line:rgba(29,26,23,.16);--ls-gold:#a78452;--ls-blush:#eadbd2}
+.site-shell{background:var(--ls-ivory);color:var(--ls-ink)}
+.site-shell .topbar{padding:20px clamp(18px,4vw,64px);background:rgba(248,244,238,.78);backdrop-filter:blur(14px);mix-blend-mode:normal;border-bottom:1px solid transparent;transition:border-color .3s}
+.site-shell .wordmark{font-family:Georgia,'Times New Roman',serif;font-weight:600;letter-spacing:.08em;line-height:.85;font-size:1rem}
+.site-shell .wordmark span{font-size:.68em;letter-spacing:.28em}
+.site-shell .topbar nav{gap:clamp(1rem,2.8vw,2.8rem);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}
+.site-shell .topbar nav a:hover,.site-shell .hero-link:hover{color:var(--ls-gold);transform:none}
+.site-shell .search-trigger{border:0;background:none;font-size:.7rem;letter-spacing:.12em;cursor:pointer;justify-self:end}
+.site-shell .hero{position:relative;min-height:100svh;padding:130px clamp(18px,4vw,64px) 70px;overflow:hidden;background:radial-gradient(circle at 75% 35%,rgba(231,207,191,.72),transparent 34%),linear-gradient(115deg,#f8f4ee 0%,#f8f4ee 55%,#eee1d8 100%)}
+.site-shell .hero:after{content:'LE SHE';position:absolute;right:-.04em;top:16%;font-family:Georgia,'Times New Roman',serif;font-size:clamp(9rem,24vw,30rem);font-weight:400;font-style:italic;line-height:.7;letter-spacing:-.08em;opacity:.045;pointer-events:none}
+.site-shell .hero .eyebrow{position:relative;z-index:1;color:var(--ls-muted);letter-spacing:.2em;font-size:.62rem}
+.site-shell .hero h1{position:relative;z-index:1;max-width:1150px;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(4.4rem,10.5vw,11.5rem);line-height:.82;letter-spacing:-.055em;text-transform:none}
+.site-shell .hero h1 span{margin-left:0;display:inline-block;margin-right:.2em}
+.site-shell .hero h1 span:nth-child(2n){font-style:italic;margin-left:9vw}
+.site-shell .hero-copy{position:relative;z-index:1;max-width:380px;margin:44px 0 24px auto;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1rem,1.35vw,1.2rem);line-height:1.35;color:#514a43}
+.site-shell .hero-link{position:relative;z-index:1;margin-left:auto;border-bottom:1px solid var(--ls-ink);padding-bottom:8px;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase}
+.site-shell .hero-link b{margin-left:28px}
+.site-shell .collection{padding:110px clamp(18px,4vw,64px);background:var(--ls-paper)}
+.site-shell .section-head{border-top:1px solid var(--ls-line);padding:14px 0 28px;color:var(--ls-muted);font-size:.62rem;letter-spacing:.16em}
+.site-shell .category-nav{display:flex;gap:10px;overflow:auto;padding:0 0 42px;scrollbar-width:none}
+.site-shell .category-nav button{border:1px solid var(--ls-line);background:transparent;padding:9px 15px;border-radius:999px;font-size:.62rem;letter-spacing:.12em;white-space:nowrap;cursor:pointer;color:var(--ls-muted);transition:.25s}
+.site-shell .category-nav button.selected,.site-shell .category-nav button:hover{background:var(--ls-ink);border-color:var(--ls-ink);color:var(--ls-paper)}
+.site-shell .product-grid{gap:80px 22px}
+.site-shell .product-card{cursor:pointer}
+.site-shell .product-card .image{background:var(--ls-blush);border-radius:2px}
+.site-shell .product-card .meta{padding-top:14px;font-family:Georgia,'Times New Roman',serif;font-size:.92rem}
+.site-shell .product-card .category{color:var(--ls-muted);letter-spacing:.12em}
+.site-shell .product-card .wishlist{background:rgba(251,248,243,.88);border:1px solid rgba(29,26,23,.08);box-shadow:0 8px 24px rgba(29,26,23,.08)}
+.site-shell .product-card .wishlist[aria-pressed=true]{background:var(--ls-ink);color:var(--ls-paper)}
+.site-shell .statement{min-height:82vh;padding:100px clamp(18px,4vw,64px);background:var(--ls-ivory);border-top:1px solid var(--ls-line)}
+.site-shell .statement>span{color:var(--ls-muted);letter-spacing:.2em}
+.site-shell .statement strong{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(4.5rem,12vw,13rem);line-height:.78;letter-spacing:-.06em}
+.site-shell .statement p{font-family:Georgia,'Times New Roman',serif;color:#514a43;line-height:1.4}
+.site-shell footer{padding:100px clamp(18px,4vw,64px) 25px;background:#1d1a17;color:var(--ls-paper);border-top:0}
+.site-shell .footer-big{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(4rem,12vw,13rem);line-height:.75;letter-spacing:-.06em}
+.site-shell .footer-bottom{border-top:1px solid rgba(248,244,238,.18);padding-top:18px;margin-top:90px;color:#b9b0a7;font-size:.62rem;letter-spacing:.08em}
+.site-shell .search-panel{position:fixed;inset:0;z-index:80;background:rgba(29,26,23,.82);backdrop-filter:blur(18px);display:grid;place-items:center;padding:24px}
+.site-shell .search-panel-inner{width:min(900px,100%);background:var(--ls-paper);padding:36px;border-radius:4px;box-shadow:0 30px 100px rgba(0,0,0,.25)}
+.site-shell .search-panel-inner span,.site-shell .search-panel-inner small{display:block;font-size:.62rem;letter-spacing:.16em;color:var(--ls-muted)}
+.site-shell .search-panel-inner input{width:100%;border:0;border-bottom:1px solid var(--ls-line);background:none;outline:0;padding:18px 0;font-family:Georgia,'Times New Roman',serif;font-size:clamp(1.8rem,4vw,3.6rem);color:var(--ls-ink)}
+.site-shell .search-panel-inner button{float:right;margin-top:-55px;border:0;background:none;font-size:2rem;cursor:pointer;color:var(--ls-ink)}
+@media(max-width:700px){.site-shell .topbar{grid-template-columns:1fr auto;padding:16px 18px}.site-shell .topbar nav{gap:.8rem}.site-shell .topbar nav a:nth-child(2),.site-shell .topbar nav a:nth-child(3){display:none}.site-shell .hero{padding-top:105px}.site-shell .hero h1{font-size:19vw}.site-shell .hero h1 span:nth-child(2n){margin-left:7vw}.site-shell .hero-copy{margin:35px 0 22px;max-width:300px}.site-shell .collection{padding-top:80px}.site-shell .product-grid{gap:52px}.site-shell .statement{min-height:70vh;padding-top:75px}.site-shell .statement strong{font-size:20vw}.site-shell footer{padding-top:80px}.site-shell .footer-bottom{grid-template-columns:1fr;gap:12px;margin-top:65px}.site-shell .search-panel-inner{padding:24px}.site-shell .search-panel-inner button{margin-top:-48px}}
+@media(prefers-reduced-motion:reduce){.site-shell *{scroll-behavior:auto!important}}
