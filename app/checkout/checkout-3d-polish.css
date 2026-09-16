@@ -1,0 +1,41 @@
+/* LE SHE SAREE — checkout 3D luxury polish */
+.checkout-shell{perspective:1400px!important}
+.checkout-shell:after{content:"";position:fixed;inset:auto -12% -18% -12%;height:38%;pointer-events:none;background:radial-gradient(ellipse at center,rgba(145,58,78,.11),transparent 67%);filter:blur(28px);z-index:0}
+.checkout-header{position:relative!important;box-shadow:0 12px 36px rgba(53,35,29,.07),0 1px 0 rgba(255,255,255,.8) inset!important}
+.checkout-header .wordmark{filter:drop-shadow(0 2px 1px rgba(80,45,37,.10));text-shadow:0 1px 0 #fff,0 2px 0 rgba(132,68,61,.08)}
+.checkout-header>a:last-child{box-shadow:0 6px 16px rgba(91,53,44,.07),inset 0 1px 0 rgba(255,255,255,.92)!important}
+.checkout-grid{transform-style:preserve-3d!important}
+.checkout-intro{position:relative!important;transform-style:preserve-3d!important}
+.checkout-progress{filter:drop-shadow(0 4px 8px rgba(91,53,44,.06))}
+.checkout-intro h1{position:relative!important;text-shadow:0 2px 0 #fff,0 5px 0 rgba(64,39,33,.06),0 16px 30px rgba(111,50,61,.08)!important;transform:translateZ(20px)!important}
+.checkout-intro h1 i{position:relative!important;text-shadow:0 2px 0 #fff0ed,0 5px 0 rgba(112,39,58,.12),0 16px 28px rgba(112,39,58,.16)!important}
+.checkout-intro>p{position:relative;z-index:2}
+.checkout-mini-trust span{box-shadow:0 7px 16px rgba(82,54,44,.06),inset 0 1px 0 rgba(255,255,255,.9)!important;transition:transform .28s ease,box-shadow .28s ease!important}
+.checkout-mini-trust span:hover{transform:translateY(-3px) rotateX(2deg);box-shadow:0 14px 24px rgba(82,54,44,.11),inset 0 1px 0 rgba(255,255,255,.95)!important}
+.checkout-total{position:relative!important;padding-bottom:6px!important}
+.checkout-total:after{content:"";position:absolute;left:0;right:0;bottom:-10px;height:8px;border-radius:999px;background:linear-gradient(90deg,rgba(160,65,82,.18),rgba(160,65,82,0));filter:blur(4px)}
+.checkout-form{transform:translateZ(24px);transform-style:preserve-3d!important;box-shadow:0 30px 80px rgba(71,44,37,.13),0 8px 24px rgba(95,50,61,.08),inset 0 1px 0 rgba(255,255,255,.96)!important}
+.checkout-form:after{content:"";position:absolute;inset:1px;border-radius:19px;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.42),transparent 34%,transparent 72%,rgba(163,76,90,.05));z-index:0}
+.checkout-form>*{position:relative;z-index:1}
+.checkout-form:before{z-index:3!important;box-shadow:0 5px 14px rgba(82,54,44,.06),inset 0 1px 0 rgba(255,255,255,.9)}
+.coupon-row input{box-shadow:inset 0 2px 6px rgba(78,47,39,.035),0 3px 10px rgba(86,51,42,.03)!important;transition:all .28s ease!important}
+.coupon-row input:focus{transform:translateY(-2px)!important;box-shadow:0 0 0 4px rgba(164,75,93,.08),0 10px 22px rgba(86,51,42,.07),inset 0 1px 0 #fff!important}
+.coupon-row button{box-shadow:0 8px 18px rgba(126,40,59,.18),inset 0 1px 0 rgba(255,255,255,.18)!important}
+.checkout-form label{display:block!important}
+.checkout-form input,.checkout-form textarea{box-shadow:inset 0 2px 7px rgba(78,47,39,.035),0 4px 12px rgba(86,51,42,.025)!important}
+.checkout-form input:hover,.checkout-form textarea:hover{transform:translateY(-1px)!important;box-shadow:0 8px 18px rgba(86,51,42,.05),inset 0 1px 0 rgba(255,255,255,.9)!important}
+.checkout-form input:focus,.checkout-form textarea:focus{transform:translateY(-2px)!important;box-shadow:0 0 0 4px rgba(176,103,115,.09),0 12px 28px rgba(69,44,35,.07),inset 0 1px 0 rgba(255,255,255,.92)!important}
+.checkout-button{box-shadow:0 18px 36px rgba(112,39,58,.22),0 3px 0 rgba(85,28,42,.25),inset 0 1px 0 rgba(255,255,255,.18)!important;text-shadow:0 1px 0 rgba(0,0,0,.16)!important}
+.checkout-button:active{transform:translateY(1px)!important;box-shadow:0 10px 20px rgba(112,39,58,.18),0 1px 0 rgba(85,28,42,.25),inset 0 2px 5px rgba(0,0,0,.08)!important}
+.checkout-button b{filter:drop-shadow(0 1px 1px rgba(0,0,0,.18))}
+.checkout-payment-note{opacity:.95}
+.checkout-order-summary{position:relative!important;transform:translateZ(8px);padding-top:24px!important}
+.checkout-summary-list{perspective:900px}
+.checkout-summary-item{transform-style:preserve-3d;box-shadow:0 8px 18px rgba(82,54,44,.045),inset 0 1px 0 rgba(255,255,255,.9)!important;transition:transform .28s ease,box-shadow .28s ease!important}
+.checkout-summary-item:hover{transform:translateY(-3px) rotateX(1deg) rotateY(-.5deg);box-shadow:0 15px 28px rgba(82,54,44,.09),inset 0 1px 0 rgba(255,255,255,.95)!important}
+.checkout-summary-item img{box-shadow:0 5px 14px rgba(82,54,44,.08)}
+.checkout-secure-strip div{box-shadow:0 7px 14px rgba(82,54,44,.045),inset 0 1px 0 rgba(255,255,255,.9)!important;transition:transform .25s ease,box-shadow .25s ease!important}
+.checkout-secure-strip div:hover{transform:translateY(-2px);box-shadow:0 12px 20px rgba(82,54,44,.08),inset 0 1px 0 rgba(255,255,255,.94)!important}
+.checkout-shell input::placeholder,.checkout-shell textarea::placeholder{transition:opacity .2s ease}.checkout-shell input:focus::placeholder,.checkout-shell textarea:focus::placeholder{opacity:.55}
+@media(max-width:1000px){.checkout-form{transform:none!important}.checkout-intro h1{transform:none!important}.checkout-shell{perspective:none!important}}
+@media(prefers-reduced-motion:reduce){.checkout-shell *,.checkout-shell *:before,.checkout-shell *:after{transition:none!important;animation:none!important}}
