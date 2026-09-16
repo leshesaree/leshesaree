@@ -29,6 +29,7 @@ import "./modern-brand.css";
 import "./final-ui-polish.css";
 import "./luxury-storefront.css";
 import "./commerce-actions.css";
+import "./leshe-home.css";
 import GlobalMotion from "./global-motion";
 import MarketingBar from "./marketing-bar";
 import AnalyticsTracker from "./analytics-tracker";
