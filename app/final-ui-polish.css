@@ -127,6 +127,13 @@ button,a{touch-action:manipulation}
  .form-row{grid-template-columns:1fr}
 }
 
+/* storefront card readability: keep the editorial layout but restore strong product text */
+.site-shell .product-grid article > a{color:var(--ls-ink,#1d1a17)!important;opacity:1!important}
+.site-shell .product-grid article > a .meta{color:var(--ls-ink,#1d1a17)!important;opacity:1!important}
+.site-shell .product-grid article > a .meta span{color:var(--ls-ink,#1d1a17)!important;opacity:1!important}
+.site-shell .product-grid article > a .category{color:var(--ls-muted,#756d64)!important;opacity:1!important}
+.site-shell .product-grid article > a:hover{color:var(--ls-ink,#1d1a17)!important}
+
 @media(prefers-reduced-motion:reduce){
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
